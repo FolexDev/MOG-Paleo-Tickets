@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Paléo Tickets — Media One Group</title>
+<title>Paléo Tickets 2026 — Media One Group</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-:root {
+:root{
   --bg:#f7f6f3;--surface:#fff;--border:#e8e6e0;--border-strong:#ccc9c0;
   --text:#1a1a18;--text-muted:#6b6860;--text-faint:#a09e99;
   --one:#e8352a;--one-bg:#fdf0ef;--one-bd:#f5b8b5;
@@ -17,113 +17,109 @@
   --r:8px;--rlg:12px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
 
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2rem}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column}
 .login-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rlg);padding:2.5rem 2rem;width:340px;text-align:center}
-.login-logo{font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--text-muted);text-transform:uppercase;margin-bottom:.5rem}
-.login-title{font-size:22px;font-weight:600;color:var(--text);margin-bottom:.25rem}
-.login-sub{font-size:13px;color:var(--text-muted);margin-bottom:2rem}
+.login-logo{font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--text-muted);text-transform:uppercase;margin-bottom:.4rem}
+.login-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:.2rem}
+.login-sub{font-size:12px;color:var(--text-muted);margin-bottom:1.75rem}
 .login-error{font-size:12px;color:var(--rouge);margin-top:1rem;display:none}
 
 #app{display:none}
-header{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:50}
-.header-left{display:flex;align-items:center;gap:1rem}
-.header-brand{font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase}
-.header-title{font-size:15px;font-weight:600;color:var(--text)}
-.header-right{display:flex;align-items:center;gap:12px}
-.user-chip{display:flex;align-items:center;gap:8px;background:var(--bg);border:0.5px solid var(--border);border-radius:20px;padding:4px 10px 4px 4px;font-size:12px;color:var(--text-muted)}
-.user-avatar{width:22px;height:22px;border-radius:50%;background:var(--text);color:var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
-.btn-logout{font-size:12px;color:var(--text-muted);background:transparent;border:none;cursor:pointer;padding:4px 8px}
+header{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 1.25rem;display:flex;align-items:center;justify-content:space-between;height:48px;position:sticky;top:0;z-index:50}
+.header-left{display:flex;align-items:center;gap:.75rem}
+.header-brand{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text-muted);text-transform:uppercase}
+.header-title{font-size:14px;font-weight:600;color:var(--text)}
+.header-right{display:flex;align-items:center;gap:10px}
+.user-chip{display:flex;align-items:center;gap:6px;background:var(--bg);border:0.5px solid var(--border);border-radius:20px;padding:3px 8px 3px 3px;font-size:11px;color:var(--text-muted)}
+.user-avatar{width:20px;height:20px;border-radius:50%;background:var(--text);color:var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600}
+.btn-logout{font-size:11px;color:var(--text-muted);background:transparent;border:none;cursor:pointer;padding:3px 6px}
 .btn-logout:hover{color:var(--text)}
-.refresh-btn{background:transparent;border:0.5px solid var(--border-strong);border-radius:var(--r);padding:5px 12px;font-size:12px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:5px}
+.refresh-btn{background:transparent;border:0.5px solid var(--border-strong);border-radius:var(--r);padding:4px 10px;font-size:11px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:4px}
 .refresh-btn:hover{background:var(--bg);color:var(--text)}
+.refresh-btn svg{width:12px;height:12px}
 
-.tabs-bar{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 1.5rem;display:flex}
-.tab-btn{padding:12px 20px;font-size:13px;font-weight:500;color:var(--text-muted);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;display:flex;align-items:center;gap:7px}
+.tabs-bar{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 1.25rem;display:flex}
+.tab-btn{padding:10px 16px;font-size:12px;font-weight:500;color:var(--text-muted);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;display:flex;align-items:center;gap:6px}
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active{color:var(--text);border-bottom-color:var(--text)}
-.tab-dot{width:8px;height:8px;border-radius:50%}
+.tab-dot{width:7px;height:7px;border-radius:50%}
 
-main{padding:1.5rem}
+main{padding:1.25rem}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
-.stats-bar{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
-.stat-pill{background:var(--surface);border:0.5px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.stats-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.stat-pill{background:var(--surface);border:0.5px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:5px}
 .stat-pill strong{color:var(--text);font-weight:600}
 
 .table-wrap{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rlg);overflow:hidden}
 .table-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12px}
 thead tr{background:var(--bg)}
-th{text-align:left;padding:9px 10px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);border-bottom:0.5px solid var(--border);white-space:nowrap}
-td{padding:7px 10px;border-bottom:0.5px solid var(--border);color:var(--text);vertical-align:middle}
+th{text-align:left;padding:7px 8px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);border-bottom:0.5px solid var(--border);white-space:nowrap}
+td{padding:5px 8px;border-bottom:0.5px solid var(--border);color:var(--text);vertical-align:middle;line-height:1.3}
 tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf8}
 tr.empty-row td{background:#fafaf8}
-td.merged{border-bottom:0.5px solid var(--border)}
-td.merged-last{border-bottom:0.5px solid var(--border-strong)}
 
-.ant-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.ant-badge{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
 .ant-O{background:var(--one-bg);color:var(--one);border:0.5px solid var(--one-bd)}
 .ant-Lac{background:var(--lac-bg);color:var(--lac);border:0.5px solid var(--lac-bd)}
 .ant-Rouge{background:var(--rouge-bg);color:var(--rouge);border:0.5px solid var(--rouge-bd)}
 .ant-LFM{background:var(--lfm-bg);color:var(--lfm);border:0.5px solid var(--lfm-bd)}
 .ant-MOC{background:var(--moc-bg);color:var(--moc);border:0.5px solid var(--moc-bd)}
 
-.status-select{font-size:12px;padding:3px 8px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;appearance:none;-webkit-appearance:none;min-width:130px;font-family:inherit}
+.status-select{font-size:11px;padding:2px 6px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;appearance:none;-webkit-appearance:none;min-width:120px;font-family:inherit}
 .s-attente{background:#f7f6f3;color:#6b6860;border-color:var(--border-strong)}
 .s-contact{background:#fdf5e8;color:#854f0b;border-color:var(--lfm-bd)}
 .s-repondu{background:#eef4fc;color:#185fa5;border-color:var(--lac-bd)}
 .s-billets{background:#eef7f2;color:#1a6b3f;border-color:var(--moc-bd)}
 
-.inline-field{display:flex;align-items:center;gap:4px;min-width:0}
-.editable-val{font-size:13px;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inline-field{display:flex;align-items:center;gap:3px;min-width:0}
+.editable-val{font-size:12px;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .editable-val.empty{color:var(--text-faint);font-style:italic}
-.btn-edit-inline{width:20px;height:20px;border-radius:var(--r);border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);flex-shrink:0;opacity:0}
+.btn-edit-inline{width:18px;height:18px;border-radius:5px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);flex-shrink:0;opacity:0}
 tr:hover .btn-edit-inline{opacity:1}
 .btn-edit-inline:hover{background:var(--bg);color:var(--text)}
-.btn-edit-inline svg{width:12px;height:12px}
+.btn-edit-inline svg{width:11px;height:11px}
 
-.paleo-block{display:flex;flex-direction:column;gap:3px}
-.paleo-row{display:flex;align-items:center;gap:4px}
-.paleo-label{font-size:10px;color:var(--text-faint);min-width:14px;text-align:right}
-.paleo-val{font-size:12px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.paleo-val.empty{color:var(--text-faint);font-style:italic;font-size:11px}
-.btn-edit-paleo{width:20px;height:20px;border-radius:var(--r);border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);flex-shrink:0}
+.paleo-inline{display:flex;align-items:center;gap:4px;min-width:0}
+.paleo-text{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.paleo-text.empty{color:var(--text-faint);font-style:italic}
+.btn-edit-paleo{width:18px;height:18px;border-radius:5px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);flex-shrink:0}
 .btn-edit-paleo:hover{background:var(--bg);color:var(--text)}
-.btn-edit-paleo svg{width:12px;height:12px}
+.btn-edit-paleo svg{width:11px;height:11px}
 
-.btn-copy-mail{display:flex;align-items:center;gap:5px;padding:4px 10px;font-size:12px;border-radius:var(--r);border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--text-muted);white-space:nowrap;font-family:inherit}
+.btn-copy-mail{display:flex;align-items:center;gap:4px;padding:3px 8px;font-size:11px;border-radius:var(--r);border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--text-muted);white-space:nowrap;font-family:inherit}
 .btn-copy-mail:hover{background:var(--bg);color:var(--text)}
 .btn-copy-mail.copied{background:#eef7f2;color:#1a6b3f;border-color:var(--moc-bd)}
-.btn-copy-mail svg{width:13px;height:13px}
+.btn-copy-mail svg{width:12px;height:12px}
 
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
-.modal{background:var(--surface);border-radius:var(--rlg);padding:1.5rem;width:440px;max-width:95vw;border:0.5px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.12)}
-.modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem}
-.modal-title{font-size:15px;font-weight:600}
-.modal-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+.modal{background:var(--surface);border-radius:var(--rlg);padding:1.25rem;width:420px;max-width:95vw;border:0.5px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+.modal-title{font-size:14px;font-weight:600}
+.modal-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
 .modal-close{background:transparent;border:none;cursor:pointer;color:var(--text-muted);padding:2px}
-.modal-close:hover{color:var(--text)}
-.modal-close svg{width:18px;height:18px}
-.form-group{margin-bottom:1rem}
-.form-label{font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
-.form-input{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--r);border:0.5px solid var(--border-strong);background:var(--surface);color:var(--text);font-family:inherit}
+.modal-close svg{width:16px;height:16px}
+.form-group{margin-bottom:.75rem}
+.form-label{font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.form-input{width:100%;font-size:12px;padding:7px 9px;border-radius:var(--r);border:0.5px solid var(--border-strong);background:var(--surface);color:var(--text);font-family:inherit}
 .form-input:focus{outline:none;border-color:var(--lac);box-shadow:0 0 0 3px rgba(0,87,168,.1)}
-.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem}
-.btn-cancel{padding:8px 16px;font-size:13px;background:transparent;border:0.5px solid var(--border-strong);border-radius:var(--r);cursor:pointer;color:var(--text-muted);font-family:inherit}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem}
+.btn-cancel{padding:6px 14px;font-size:12px;background:transparent;border:0.5px solid var(--border-strong);border-radius:var(--r);cursor:pointer;color:var(--text-muted);font-family:inherit}
 .btn-cancel:hover{background:var(--bg)}
-.btn-save{padding:8px 16px;font-size:13px;background:var(--text);color:var(--surface);border:none;border-radius:var(--r);cursor:pointer;font-weight:500;font-family:inherit}
+.btn-save{padding:6px 14px;font-size:12px;background:var(--text);color:var(--surface);border:none;border-radius:var(--r);cursor:pointer;font-weight:500;font-family:inherit}
 .btn-save:hover{opacity:.85}
 .btn-save:disabled{opacity:.5;cursor:not-allowed}
-.modal-divider{border:none;border-top:0.5px solid var(--border);margin:1rem 0}
 
-#toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--text);color:var(--surface);padding:10px 16px;border-radius:var(--r);font-size:13px;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999}
+#toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--text);color:var(--surface);padding:8px 14px;border-radius:var(--r);font-size:12px;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999}
 #toast.show{opacity:1}
-.loading{text-align:center;padding:3rem;color:var(--text-faint);font-size:13px}
-.spin{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--text-muted);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+.loading{text-align:center;padding:3rem;color:var(--text-faint);font-size:12px}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--text-muted);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
@@ -132,7 +128,7 @@ tr:hover .btn-edit-inline{opacity:1}
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">Media One Group</div>
-    <div class="login-title">Paléo Tickets</div>
+    <div class="login-title">Paléo Tickets 2026</div>
     <div class="login-sub">Gestion de la distribution des billets</div>
     <div id="g_signin_btn"></div>
     <div class="login-error" id="login-error">Accès non autorisé. Connectez-vous avec votre compte Media One Group.</div>
@@ -143,7 +139,7 @@ tr:hover .btn-edit-inline{opacity:1}
   <header>
     <div class="header-left">
       <span class="header-brand">MOG</span>
-      <span class="header-title">Paléo Tickets 2025</span>
+      <span class="header-title">Paléo Tickets 2026</span>
     </div>
     <div class="header-right">
       <button class="refresh-btn" onclick="refreshAll()">
@@ -177,30 +173,17 @@ tr:hover .btn-edit-inline{opacity:1}
   </main>
 </div>
 
-<!-- Modal champs gagnant -->
+<!-- Modal gagnant -->
 <div class="modal-bg" id="modal-winner">
   <div class="modal">
     <div class="modal-header">
-      <div>
-        <div class="modal-title">Modifier le gagnant</div>
-        <div class="modal-sub" id="mw-sub"></div>
-      </div>
-      <button class="modal-close" onclick="closeModal('modal-winner')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+      <div><div class="modal-title">Modifier le gagnant</div><div class="modal-sub" id="mw-sub"></div></div>
+      <button class="modal-close" onclick="closeModal('modal-winner')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Nom et Prénom</label>
-      <input class="form-input" id="mw-nom" type="text" placeholder="Dupont Marie" />
-    </div>
-    <div class="form-group">
-      <label class="form-label">Téléphone</label>
-      <input class="form-input" id="mw-tel" type="text" placeholder="079 000 00 00" />
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input class="form-input" id="mw-email" type="email" placeholder="marie.dupont@email.com" />
-    </div>
+    <div class="form-group"><label class="form-label">Nom et Prénom</label><input class="form-input" id="mw-nom" type="text" placeholder="Dupont Marie" /></div>
+    <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="mw-tel" type="text" /></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mw-email" type="email" /></div>
+    <div class="form-group"><label class="form-label">Jeu / Origine</label><input class="form-input" id="mw-jeu" type="text" placeholder="ex: 30 ans pour 30 minutes" /></div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal('modal-winner')">Annuler</button>
       <button class="btn-save" id="mw-save-btn" onclick="saveWinner()">Enregistrer</button>
@@ -208,17 +191,12 @@ tr:hover .btn-edit-inline{opacity:1}
   </div>
 </div>
 
-<!-- Modal données Paléo Tickets -->
+<!-- Modal Paléo Tickets -->
 <div class="modal-bg" id="modal-paleo">
   <div class="modal">
     <div class="modal-header">
-      <div>
-        <div class="modal-title">Données Paléo Tickets</div>
-        <div class="modal-sub" id="mp-sub"></div>
-      </div>
-      <button class="modal-close" onclick="closeModal('modal-paleo')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+      <div><div class="modal-title">Données Paléo Tickets</div><div class="modal-sub" id="mp-sub"></div></div>
+      <button class="modal-close" onclick="closeModal('modal-paleo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div id="mp-fields"></div>
     <div class="modal-btns">
@@ -234,38 +212,32 @@ tr:hover .btn-edit-inline{opacity:1}
 const CLIENT_ID='254325008139-rp0p175m2icjv0pr6jv9vp52n9jjpdik.apps.googleusercontent.com';
 const API_KEY='AIzaSyBw5-W46qmpeWn79XKtiqE1CZuiXXkHWH8';
 const ALLOWED=['alex@mediaonegroup.ch','lionel@mediaonegroup.ch'];
-
 const SHEETS=[
   {id:'15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c',name:'DISTRIBUTION ONE & LAC',panel:0},
   {id:'116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8',name:'DISTRIBUTION Carac-MOC',panel:1},
   {id:'1J8833aM0abL9iTD0-GGMGlnkPc5vkqHRDXpvkWR8jrk',name:'DISTRIBUTION LFM & ROUGE',panel:2}
 ];
 
-let accessToken=null;
-let sheetData=[[],[],[]];
-let currentEditWinner=null;
-let currentEditPaleo=null;
+// Mapping abrév → jour complet pour les dates du Paléo 2026
+const DAY_MAP={'mar':'Mardi','mer':'Mercredi','jeu':'Jeudi','ven':'Vendredi','sam':'Samedi','dim':'Dimanche','lun':'Lundi'};
 
-/* ---- AUTH ---- */
+let accessToken=null,sheetData=[[],[],[]],currentEditWinner=null,currentEditPaleo=null;
+
+/* AUTH */
 function initGoogle(){
   google.accounts.id.initialize({client_id:CLIENT_ID,callback:handleCredential,auto_select:false});
   google.accounts.id.renderButton(document.getElementById('g_signin_btn'),{theme:'outline',size:'large',text:'signin_with',locale:'fr',width:260});
 }
-
 function handleCredential(response){
-  const payload=JSON.parse(atob(response.credential.split('.')[1]));
-  if(!ALLOWED.includes(payload.email.toLowerCase())){
-    document.getElementById('login-error').style.display='block';
-    return;
-  }
-  const ini=(payload.given_name?.[0]||'')+(payload.family_name?.[0]||'');
+  const p=JSON.parse(atob(response.credential.split('.')[1]));
+  if(!ALLOWED.includes(p.email.toLowerCase())){document.getElementById('login-error').style.display='block';return;}
+  const ini=(p.given_name?.[0]||'')+(p.family_name?.[0]||'');
   document.getElementById('user-avatar').textContent=ini.toUpperCase();
-  document.getElementById('user-name').textContent=payload.given_name||payload.email;
+  document.getElementById('user-name').textContent=p.given_name||p.email;
   requestAccessToken();
 }
-
 function requestAccessToken(){
-  const client=google.accounts.oauth2.initTokenClient({
+  google.accounts.oauth2.initTokenClient({
     client_id:CLIENT_ID,
     scope:'https://www.googleapis.com/auth/spreadsheets',
     callback:(tr)=>{
@@ -276,72 +248,64 @@ function requestAccessToken(){
         loadAllSheets();
       }
     }
-  });
-  client.requestAccessToken();
+  }).requestAccessToken();
 }
+function signOut(){google.accounts.id.disableAutoSelect();accessToken=null;document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';}
 
-function signOut(){
-  google.accounts.id.disableAutoSelect();
-  accessToken=null;
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-}
-
-/* ---- DATA ---- */
+/* DATA */
 async function loadSheet(idx){
   const s=SHEETS[idx];
   const panel=document.getElementById('panel-'+s.panel);
   panel.innerHTML='<div class="loading"><span class="spin"></span>Chargement...</div>';
   try{
-    const url=`https://sheets.googleapis.com/v4/spreadsheets/${s.id}/values/A:K?key=${API_KEY}`;
-    const resp=await fetch(url,{headers:{Authorization:'Bearer '+accessToken}});
+    const resp=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${s.id}/values/A:K?key=${API_KEY}`,{headers:{Authorization:'Bearer '+accessToken}});
     const data=await resp.json();
     if(data.error) throw new Error(data.error.message);
     sheetData[idx]=data.values||[];
     renderPanel(idx);
-  }catch(e){
-    panel.innerHTML=`<div class="loading" style="color:#cc2244">Erreur : ${e.message}</div>`;
-  }
+  }catch(e){document.getElementById('panel-'+s.panel).innerHTML=`<div class="loading" style="color:#cc2244">Erreur : ${e.message}</div>`;}
 }
-
 async function loadAllSheets(){for(let i=0;i<3;i++) await loadSheet(i);}
 function refreshAll(){loadAllSheets();showToast('Actualisation en cours...');}
 
-/* ---- HELPERS ---- */
-function antKey(v){if(!v)return'';v=v.trim();if(v==='O')return'O';if(v==='Lac')return'Lac';if(v==='Rouge')return'Rouge';if(v==='LFM')return'LFM';return'MOC';}
-function antLabel(v){if(!v)return'';v=v.trim();if(v==='O')return'One FM';if(v==='Lac')return'Radio Lac';if(v==='Rouge')return'Rouge FM';if(v==='LFM')return'LFM';return v;}
-function fmtDate(v){return v?(v.trim().replace(/^\w+\.\s*/,'')):'';}
+/* HELPERS */
+function antKey(v){if(!v)return'';v=v.trim();return v==='O'?'O':v==='Lac'?'Lac':v==='Rouge'?'Rouge':v==='LFM'?'LFM':'MOC';}
+function antLabel(v){if(!v)return'';v=v.trim();return v==='O'?'One FM':v==='Lac'?'Radio Lac':v==='Rouge'?'Rouge FM':v==='LFM'?'LFM':v;}
+function fmtDate(v){
+  if(!v) return '';
+  v=v.trim();
+  // "mar. 21 juil." → "Mardi 21 juillet 2026"
+  const m=v.match(/^(\w+)\.\s*(\d+)\s+(\w+)\.?/);
+  if(!m) return v;
+  const dayFull=DAY_MAP[m[1].toLowerCase()]||m[1];
+  const monthMap={'janv':'janvier','févr':'février','mars':'mars','avr':'avril','mai':'mai','juin':'juin','juil':'juillet','août':'août','sept':'septembre','oct':'octobre','nov':'novembre','déc':'décembre'};
+  const monthFull=monthMap[m[3].toLowerCase()]||m[3];
+  return `${dayFull} ${m[2]} ${monthFull} 2026`;
+}
 function sClass(s){if(!s)return's-attente';s=s.toLowerCase();if(s.includes('expédié')||s.includes('expedie')||s.includes('billet'))return's-billets';if(s.includes('répondu')||s.includes('repondu'))return's-repondu';if(s.includes('contact'))return's-contact';return's-attente';}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function jsEsc(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 
-/* ---- MERGE DETECTION ----
-   Billet impair avec antenne = "chef de groupe"
-   La ligne suivante (billet pair, pas d'antenne) lui appartient → rowspan=2
-*/
+/* MERGE DETECTION */
 function buildGroups(rows){
-  const groups=[];
-  let i=0;
+  const g=[];let i=0;
   while(i<rows.length){
     const r=rows[i];
     const ant=(r[0]||'').trim();
-    const billetNo=parseInt(r[2]||0);
-    // ligne paire suivante sans antenne ?
-    const next=rows[i+1];
-    const nextAnt=(next?.[0]||'').trim();
-    const nextBillet=parseInt(next?.[2]||0);
-    if(ant && billetNo%2===1 && next && !nextAnt && nextBillet===billetNo+1){
-      groups.push({main:r,extra:next,mainIdx:i+2,extraIdx:i+3,span:2});
-      i+=2;
-    } else {
-      groups.push({main:r,extra:null,mainIdx:i+2,extraIdx:null,span:1});
-      i++;
+    const bNo=parseInt(r[2]||0);
+    const nx=rows[i+1];
+    const nxAnt=(nx?.[0]||'').trim();
+    const nxNo=parseInt(nx?.[2]||0);
+    if(ant&&bNo%2===1&&nx&&!nxAnt&&nxNo===bNo+1){
+      g.push({main:r,extra:nx,mainIdx:i+2,extraIdx:i+3,span:2});i+=2;
+    }else{
+      g.push({main:r,extra:null,mainIdx:i+2,extraIdx:null,span:1});i++;
     }
   }
-  return groups;
+  return g;
 }
 
-/* ---- RENDER ---- */
+/* RENDER */
 function renderPanel(idx){
   const s=SHEETS[idx];
   const panel=document.getElementById('panel-'+s.panel);
@@ -350,12 +314,12 @@ function renderPanel(idx){
 
   let total=0,contact=0,repondu=0,billets=0;
   groups.forEach(g=>{
-    if(!(g.main[0]||'').trim()) return;
+    if(!(g.main[0]||'').trim())return;
     total++;
     const st=(g.main[4]||'').toLowerCase();
-    if(st.includes('contact')) contact++;
-    if(st.includes('répondu')||st.includes('repondu')) repondu++;
-    if(st.includes('expédié')||st.includes('expedie')||st.includes('billet')) billets++;
+    if(st.includes('contact'))contact++;
+    if(st.includes('répondu')||st.includes('repondu'))repondu++;
+    if(st.includes('expédié')||st.includes('expedie')||st.includes('billet'))billets++;
   });
 
   let html=`<div class="stats-bar">
@@ -366,11 +330,9 @@ function renderPanel(idx){
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
-    <th>Ant.</th><th>Date</th><th>#</th>
+    <th>Ant.</th><th>Date</th><th>#</th><th>Jeu</th>
     <th>Nom &amp; Prénom</th><th>Téléphone</th><th>Email</th>
-    <th>Statut</th>
-    <th>Paléo Tickets (I/J/K)</th>
-    <th>Mail</th>
+    <th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
 
   groups.forEach(g=>{
@@ -379,61 +341,55 @@ function renderPanel(idx){
     const ak=antKey(ant);
     const date=r[1]||'';
     const bNo=r[2]||'';
+    const jeu=r[3]||'';
     const statut=r[4]||'en attente';
     const nom=r[5]||'';
     const tel=r[6]||'';
     const email=r[7]||'';
+    const pNom1=r[8]||'',pPre1=r[9]||'',pMail1=r[10]||'';
+    const re=g.extra||[];
+    const pNom2=re[8]||'',pPre2=re[9]||'',pMail2=re[10]||'';
     const isEmpty=!ant&&!nom;
     const sp=g.span;
-    const mainRow=g.mainIdx;
+    const mIdx=g.mainIdx;
     const sc=sClass(statut);
-
-    // Paléo data — ligne principale
-    const pNom1=r[8]||'';const pPre1=r[9]||'';const pMail1=r[10]||'';
-    // Paléo data — ligne extra (2e billet)
-    const re=g.extra||[];
-    const pNom2=re[8]||'';const pPre2=re[9]||'';const pMail2=re[10]||'';
-
     const rowCls=isEmpty?' class="empty-row"':'';
 
-    // Cellules fusionnées (rowspan)
-    const antCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<span class="ant-badge ant-${ak}">${antLabel(ant)}</span>`:''}</td>`;
-    const dateCell=`<td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-muted)">${fmtDate(date)}</td>`;
+    const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
 
-    const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle">
+    const antCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<span class="ant-badge ant-${ak}">${antLabel(ant)}</span>`:''}</td>`;
+    const dateCell=`<td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-muted);font-size:11px">${fmtDate(date)}</td>`;
+    const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:120px">
       <div class="inline-field">
-        <div class="editable-val ${nom?'':'empty'}">${esc(nom)||'—'}</div>
-        ${ant?`<button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mainRow},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}')" title="Modifier">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>`:''}
+        <div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div>
+        ${ant?`<button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button>`:''}
       </div>
     </td>`;
-
-    const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:12px">${esc(tel)}</td>`;
-    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:12px;color:var(--text-muted)">${esc(email)}</td>`;
-
-    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${sc}" onchange="updateStatus(this,${idx},${mainRow})">
+    const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:140px">
+      <div class="inline-field">
+        <div class="editable-val ${nom?'':'empty'}">${esc(nom)||'—'}</div>
+        ${ant?`<button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button>`:''}
+      </div>
+    </td>`;
+    const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
+    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)">${esc(email)}</td>`;
+    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${sc}" onchange="updateStatus(this,${idx},${mIdx})">
       <option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option>
       <option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option>
       <option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option>
       <option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option>
     </select>`:''}</td>`;
-
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      Mail
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail
     </button>`:''}</td>`;
 
-    // Paléo cell ligne principale
-    const paleoCellMain=buildPaleoCell(idx,mainRow,1,bNo,pNom1,pPre1,pMail1,ant);
+    const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant);
+    html+=`<tr${rowCls}>${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
 
-    html+=`<tr${rowCls}>${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${winnerCell}${telCell}${emailCell}${statusCell}${paleoCellMain}${mailCell}</tr>`;
-
-    // Ligne extra (2e billet)
     if(g.extra){
       const bNo2=g.extra[2]||'';
-      const paleoCellExtra=buildPaleoCell(idx,g.extraIdx,2,bNo2,pNom2,pPre2,pMail2,ant);
-      html+=`<tr><td style="text-align:center;color:var(--text-faint)">${esc(bNo2)}</td>${paleoCellExtra}</tr>`;
+      const paleoCell2=buildPaleoCell(idx,g.extraIdx,bNo2,pNom2,pPre2,pMail2,ant);
+      html+=`<tr><td style="text-align:center;color:var(--text-faint)">${esc(bNo2)}</td>${paleoCell2}</tr>`;
     }
   });
 
@@ -441,62 +397,54 @@ function renderPanel(idx){
   panel.innerHTML=html;
 }
 
-function buildPaleoCell(idx,rowNum,billetNum,bNo,pNom,pPre,pMail,ant){
+function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant){
   const filled=pNom||pPre||pMail;
-  const editBtn=ant?`<button class="btn-edit-paleo" onclick="openPaleoModal(${idx},${rowNum},'${jsEsc(bNo)}','${jsEsc(pNom)}','${jsEsc(pPre)}','${jsEsc(pMail)}')" title="Modifier">
+  const txt=filled?`${pNom} ${pPre} — ${pMail}`:'non renseigné';
+  const editBtn=ant?`<button class="btn-edit-paleo" onclick="openPaleoModal(${idx},${rowNum},'${jsEsc(bNo)}','${jsEsc(pNom)}','${jsEsc(pPre)}','${jsEsc(pMail)}')" title="Modifier données Paléo">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
   </button>`:'';
-  return `<td>
-    <div class="paleo-block">
-      <div class="paleo-row">
-        <span class="paleo-label">N</span>
-        <span class="paleo-val ${pNom?'':'empty'}">${esc(pNom)||'—'}</span>
-      </div>
-      <div class="paleo-row">
-        <span class="paleo-label">P</span>
-        <span class="paleo-val ${pPre?'':'empty'}">${esc(pPre)||'—'}</span>
-      </div>
-      <div class="paleo-row">
-        <span class="paleo-label">@</span>
-        <span class="paleo-val ${pMail?'':'empty'}" style="font-size:11px">${esc(pMail)||'—'}</span>
-      </div>
+  return `<td style="max-width:200px">
+    <div class="paleo-inline">
+      <div class="paleo-text ${filled?'':'empty'}">${esc(txt)}</div>
+      ${editBtn}
     </div>
-    ${editBtn}
   </td>`;
 }
 
-/* ---- WRITE STATUS ---- */
+/* WRITE */
 async function updateStatus(select,sheetIdx,rowNum){
   const val=select.value;
   select.className='status-select '+sClass(val);
-  const s=SHEETS[sheetIdx];
-  try{
-    await sheetWrite(s.id,`E${rowNum}`,[[val]]);
-    showToast('Statut mis à jour');
-  }catch(e){showToast('Erreur : '+e.message);}
+  try{await sheetWrite(SHEETS[sheetIdx].id,`E${rowNum}`,[[val]]);showToast('Statut mis à jour');}
+  catch(e){showToast('Erreur : '+e.message);}
 }
 
-/* ---- WINNER MODAL ---- */
-function openWinnerModal(idx,row,nom,tel,email){
+/* WINNER MODAL */
+function openWinnerModal(idx,row,nom,tel,email,jeu){
   currentEditWinner={idx,row};
   document.getElementById('mw-sub').textContent=`Ligne ${row} — ${SHEETS[idx].name}`;
   document.getElementById('mw-nom').value=nom;
   document.getElementById('mw-tel').value=tel;
   document.getElementById('mw-email').value=email;
+  document.getElementById('mw-jeu').value=jeu;
   document.getElementById('modal-winner').classList.add('open');
   document.getElementById('mw-nom').focus();
 }
-
 async function saveWinner(){
   if(!currentEditWinner)return;
   const {idx,row}=currentEditWinner;
   const nom=document.getElementById('mw-nom').value.trim();
   const tel=document.getElementById('mw-tel').value.trim();
   const email=document.getElementById('mw-email').value.trim();
+  const jeu=document.getElementById('mw-jeu').value.trim();
   const btn=document.getElementById('mw-save-btn');
   btn.disabled=true;btn.textContent='Enregistrement...';
   try{
-    await sheetWrite(SHEETS[idx].id,`F${row}:H${row}`,[[nom,tel,email]]);
+    // Col D=jeu(idx3), F=nom(idx5), G=tel(idx6), H=email(idx7)
+    // On écrit D:H d'un coup en incluant col E (statut) qu'on ne touche pas → on relit d'abord
+    const cur=sheetData[idx][row-1]||[];
+    const statut=cur[4]||'';
+    await sheetWrite(SHEETS[idx].id,`D${row}:H${row}`,[[jeu,statut,nom,tel,email]]);
     closeModal('modal-winner');
     showToast('Gagnant mis à jour');
     await loadSheet(idx);
@@ -504,7 +452,7 @@ async function saveWinner(){
   finally{btn.disabled=false;btn.textContent='Enregistrer';}
 }
 
-/* ---- PALEO MODAL ---- */
+/* PALEO MODAL */
 function openPaleoModal(idx,row,bNo,pNom,pPre,pMail){
   currentEditPaleo={idx,row};
   document.getElementById('mp-sub').textContent=`Billet N°${bNo} — ${SHEETS[idx].name}`;
@@ -513,9 +461,8 @@ function openPaleoModal(idx,row,bNo,pNom,pPre,pMail){
     <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" id="mp-prenom" type="text" placeholder="Marie" value="${esc(pPre)}" /></div>
     <div class="form-group"><label class="form-label">Email compte Paléo Tickets</label><input class="form-input" id="mp-email" type="email" placeholder="marie@email.com" value="${esc(pMail)}" /></div>`;
   document.getElementById('modal-paleo').classList.add('open');
-  document.getElementById('mp-nom').focus();
+  setTimeout(()=>document.getElementById('mp-nom').focus(),50);
 }
-
 async function savePaleo(){
   if(!currentEditPaleo)return;
   const {idx,row}=currentEditPaleo;
@@ -526,109 +473,54 @@ async function savePaleo(){
   btn.disabled=true;btn.textContent='Enregistrement...';
   try{
     await sheetWrite(SHEETS[idx].id,`I${row}:K${row}`,[[nom,pre,mail]]);
-    closeModal('modal-paleo');
-    showToast('Données Paléo Tickets enregistrées');
+    closeModal('modal-paleo');showToast('Données Paléo Tickets enregistrées');
     await loadSheet(idx);
   }catch(e){showToast('Erreur : '+e.message);}
   finally{btn.disabled=false;btn.textContent='Enregistrer';}
 }
 
-/* ---- SHEET WRITE ---- */
+/* SHEET WRITE */
 async function sheetWrite(sheetId,range,values){
-  const r=encodeURIComponent(range);
-  const resp=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${r}?valueInputOption=RAW`,{
-    method:'PUT',
-    headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},
+  const resp=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,{
+    method:'PUT',headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},
     body:JSON.stringify({values})
   });
   const d=await resp.json();
   if(d.error) throw new Error(d.error.message);
 }
 
-/* ---- MAIL ---- */
+/* MAIL */
 function buildMailHTML(ak,dateRaw){
   const date=fmtDate(dateRaw);
   const tutoie=ak==='O'||ak==='Rouge';
   const andLink='https://play.google.com/store/apps/details?id=io.tixngo.app.paleo22&hl=fr_CH&gl=US';
   const iosLink='https://apps.apple.com/us/app/pal%C3%A9o-tickets/id1589046996';
   const faqLink='https://yeah.paleo.ch/fr/faq-paleo-tickets';
-
-  if(tutoie){return `Bonjour,<br><br>
-Tu as gagné deux places pour le Paléo pour la soirée du <strong>${date}</strong>.<br>
-Les billets seront transmis sur l'application Paléo Tickets que tu dois installer sur ton téléphone :<br>
-&nbsp;- <a href="${andLink}">clique ici pour le lien sur Android</a><br>
-&nbsp;- <a href="${iosLink}">clique ici pour le lien sur iPhone</a><br>
-Et si tu ne comprends pas tout comment ça marche, les infos se trouvent <a href="${faqLink}">là</a> !<br><br>
-Ensuite, si tu as déjà un compte Paléo Tickets, il faut me donner :<br>
-&nbsp;- l'adresse mail,<br>
-&nbsp;- le nom<br>
-&nbsp;- et le prénom<br>
-qui sont liés à ce compte.<br><br>
-Si tu n'as pas encore de compte, il faut me donner :<br>
-&nbsp;- l'adresse mail,<br>
-&nbsp;- le nom<br>
-&nbsp;- et le prénom<br>
-avec lesquels tu vas créer ce compte.<br><br>
-Attention, les billets seront ensuite dans <strong>TON</strong> téléphone, sur ton application.<br>
-Si tu le souhaites, tu peux nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.<br><br>
-Nous sommes toujours à disposition en cas de questions.`;}
-
-  return `Bonjour,<br><br>
-Vous avez gagné deux places pour le Paléo pour la soirée du <strong>${date}</strong>.<br>
-Les billets seront transmis sur l'application Paléo Tickets que vous devez installer sur votre téléphone :<br>
-&nbsp;- <a href="${andLink}">cliquez ici pour le lien sur Android</a><br>
-&nbsp;- <a href="${iosLink}">cliquez ici pour le lien sur iPhone</a><br>
-Et si vous ne comprenez pas tout comment ça marche, les infos se trouvent <a href="${faqLink}">là</a> !<br><br>
-Ensuite, si vous avez déjà un compte Paléo Tickets, il faut me donner :<br>
-&nbsp;- l'adresse mail,<br>
-&nbsp;- le nom<br>
-&nbsp;- et le prénom<br>
-qui sont liés à ce compte.<br><br>
-Si vous n'avez pas encore de compte, il faut me donner :<br>
-&nbsp;- l'adresse mail,<br>
-&nbsp;- le nom<br>
-&nbsp;- et le prénom<br>
-avec lesquels vous allez créer ce compte.<br><br>
-Attention, les billets seront ensuite dans <strong>VOTRE</strong> téléphone, sur votre application.<br>
-Si vous le souhaitez, vous pouvez nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.<br><br>
-Nous sommes toujours à disposition en cas de questions.`;
+  const progLink='https://yeah.paleo.ch/fr/programme';
+  if(tutoie){return `Bonjour,<br><br>Tu as gagné deux places pour le Paléo pour la soirée du <strong>${date}</strong>.<br>Tu peux consulter le programme de cette soirée <a href="${progLink}">ici</a>.<br><br>Les billets seront transmis sur l'application Paléo Tickets que tu dois installer sur ton téléphone :<br>&nbsp;- <a href="${andLink}">clique ici pour le lien sur Android</a><br>&nbsp;- <a href="${iosLink}">clique ici pour le lien sur iPhone</a><br>Et si tu ne comprends pas tout comment ça marche, les infos se trouvent <a href="${faqLink}">là</a> !<br><br>Ensuite, si tu as déjà un compte Paléo Tickets, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>qui sont liés à ce compte.<br><br>Si tu n'as pas encore de compte, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>avec lesquels tu vas créer ce compte.<br><br>Attention, les billets seront ensuite dans <strong>TON</strong> téléphone, sur ton application.<br>Si tu le souhaites, tu peux nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.<br><br>Nous sommes toujours à disposition en cas de questions.`;}
+  return `Bonjour,<br><br>Vous avez gagné deux places pour le Paléo pour la soirée du <strong>${date}</strong>.<br>Vous pouvez consulter le programme de cette soirée <a href="${progLink}">ici</a>.<br><br>Les billets seront transmis sur l'application Paléo Tickets que vous devez installer sur votre téléphone :<br>&nbsp;- <a href="${andLink}">cliquez ici pour le lien sur Android</a><br>&nbsp;- <a href="${iosLink}">cliquez ici pour le lien sur iPhone</a><br>Et si vous ne comprenez pas tout comment ça marche, les infos se trouvent <a href="${faqLink}">là</a> !<br><br>Ensuite, si vous avez déjà un compte Paléo Tickets, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>qui sont liés à ce compte.<br><br>Si vous n'avez pas encore de compte, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>avec lesquels vous allez créer ce compte.<br><br>Attention, les billets seront ensuite dans <strong>VOTRE</strong> téléphone, sur votre application.<br>Si vous le souhaitez, vous pouvez nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.<br><br>Nous sommes toujours à disposition en cas de questions.`;
 }
 
 function copyMail(btn,ak,dateRaw){
   const html=buildMailHTML(ak,dateRaw);
-  const blob=new Blob([html],{type:'text/html'});
-  const plain=html.replace(/<a href="([^"]+)">[^<]+<\/a>/g,(_,u)=>u).replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
-  const blobPlain=new Blob([plain],{type:'text/plain'});
+  const plain=html.replace(/<a href="([^"]+)">([^<]+)<\/a>/g,'$2 ($1)').replace(/<br>/g,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
   try{
-    navigator.clipboard.write([new ClipboardItem({'text/html':blob,'text/plain':blobPlain})]).then(()=>{
+    navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([plain],{type:'text/plain'})})]).then(()=>{
       btn.classList.add('copied');
       btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copié`;
       setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Mail`;},2000);
     });
-  }catch(e){
-    navigator.clipboard.writeText(plain);
-    showToast('Copié en texte brut (navigateur limité)');
-  }
+  }catch(e){navigator.clipboard.writeText(plain);showToast('Copié (texte brut)');}
 }
 
-/* ---- UI ---- */
+/* UI */
 function switchTab(idx){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
 }
-
-function closeModal(id){
-  document.getElementById(id).classList.remove('open');
-  currentEditWinner=null;currentEditPaleo=null;
-}
-
+function closeModal(id){document.getElementById(id).classList.remove('open');currentEditWinner=null;currentEditPaleo=null;}
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 window.addEventListener('load',()=>{
   if(typeof google!=='undefined'&&google.accounts) initGoogle();
