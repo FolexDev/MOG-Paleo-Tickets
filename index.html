@@ -36,9 +36,10 @@ header{background:var(--surface);border-bottom:0.5px solid var(--border);padding
 .user-avatar{width:20px;height:20px;border-radius:50%;background:var(--text);color:var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600}
 .btn-logout{font-size:11px;color:var(--text-muted);background:transparent;border:none;cursor:pointer;padding:3px 6px}
 .btn-logout:hover{color:var(--text)}
-.btn-admin{font-size:11px;color:var(--text-muted);background:transparent;border:0.5px solid var(--border);border-radius:var(--r);cursor:pointer;padding:3px 8px;display:none;align-items:center;gap:4px}
+.btn-admin{font-size:11px;color:var(--text-muted);background:transparent;border:0.5px solid var(--border);border-radius:var(--r);cursor:pointer;padding:3px 8px;display:flex;align-items:center;gap:4px;visibility:hidden}
 .btn-admin:hover{background:var(--bg);color:var(--text)}
 .btn-admin svg{width:12px;height:12px}
+.btn-admin.visible{visibility:visible}
 .log-list{list-style:none;margin:0;padding:0;max-height:400px;overflow-y:auto}
 .log-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:12px}
 .log-item:last-child{border-bottom:none}
@@ -300,6 +301,7 @@ function initGoogle(){
       const p=JSON.parse(saved);
       document.getElementById('user-avatar').textContent=((p.given_name?.[0]||'')+(p.family_name?.[0]||'')).toUpperCase();
       document.getElementById('user-name').textContent=p.given_name||p.email;
+      if((p.email||'').toLowerCase()==='alex@mediaonegroup.ch') document.getElementById('btn-admin').classList.add('visible');
       logConnection(p.email);
       requestAccessToken(true);
       return;
@@ -314,7 +316,8 @@ function handleCredential(response){
   document.getElementById('user-avatar').textContent=ini.toUpperCase();
   document.getElementById('user-name').textContent=p.given_name||p.email;
   localStorage.setItem('paleo_user',JSON.stringify({email:p.email.toLowerCase(),given_name:p.given_name,family_name:p.family_name}));
-  logConnection(p.email);
+  logConnection(p.email.toLowerCase());
+  if(p.email.toLowerCase()==='alex@mediaonegroup.ch') document.getElementById('btn-admin').classList.add('visible');
   requestAccessToken(false);
 }
 function requestAccessToken(silent){
@@ -328,7 +331,7 @@ function requestAccessToken(silent){
         document.getElementById('login-screen').style.display='none';
         document.getElementById('app').style.display='block';
         const savedU=localStorage.getItem('paleo_user');
-        try{const pu=JSON.parse(savedU||'{}');if((pu.email||'').toLowerCase()==='alex@mediaonegroup.ch'){document.getElementById('btn-admin').style.display='flex';}}catch(e){}
+        try{const pu=JSON.parse(savedU||'{}');if((pu.email||'').toLowerCase()==='alex@mediaonegroup.ch'){document.getElementById('btn-admin').classList.add('visible');}}catch(e){}
         loadAllSheets();
       } else if(silent){
         // Échec silencieux → afficher le bouton de connexion normalement
@@ -343,7 +346,7 @@ function signOut(){
   google.accounts.id.disableAutoSelect();
   localStorage.removeItem('paleo_user');
   accessToken=null;
-  const ab=document.getElementById('btn-admin');if(ab)ab.style.display='none';
+  document.getElementById('btn-admin').classList.remove('visible');
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   google.accounts.id.renderButton(document.getElementById('g_signin_btn'),{theme:'outline',size:'large',text:'signin_with',locale:'fr',width:260});
