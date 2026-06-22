@@ -125,6 +125,14 @@ tr:hover .btn-edit-inline{opacity:1}
 .btn-nav{width:22px;height:22px;border-radius:5px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
 .btn-nav:hover{background:var(--bg);color:var(--text)}
 .btn-nav svg{width:12px;height:12px}
+.filter-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.filter-btn{padding:3px 12px;font-size:11px;font-weight:500;border-radius:20px;border:0.5px solid var(--border-strong);background:transparent;color:var(--text-muted);cursor:pointer;font-family:inherit}
+.filter-btn:hover{background:var(--bg)}
+.filter-btn.active{color:var(--text);background:var(--bg);border-color:var(--text)}
+.filter-btn.f-attente.active{background:#fff4e0;color:#b35f00;border-color:#f0c070}
+.filter-btn.f-contact.active{background:#f3eeff;color:#5b33b0;border-color:#c4a8f5}
+.filter-btn.f-repondu.active{background:#fff0f0;color:#b02020;border-color:#f5a8a8}
+.filter-btn.f-billets.active{background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8}
 .send-badge{display:inline-flex;align-items:center;gap:5px;background:#fff4e0;color:#b35f00;border:0.5px solid #f0c070;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;cursor:default}
 .send-badge svg{width:13px;height:13px}
 tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
@@ -154,6 +162,11 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
       <span class="header-title">Paléo Tickets 2026</span>
     </div>
     <div class="header-right">
+      <div style="display:flex;gap:6px;align-items:center;border-right:0.5px solid var(--border);padding-right:10px;margin-right:2px">
+        <a href="https://docs.google.com/spreadsheets/d/15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c/edit" target="_blank" style="font-size:11px;color:#0057a8;text-decoration:none;display:flex;align-items:center;gap:2px;padding:3px 7px;border:0.5px solid #b3cef0;border-radius:20px;background:#eef4fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>ONE-LAC</a>
+        <a href="https://docs.google.com/spreadsheets/d/116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8/edit" target="_blank" style="font-size:11px;color:#2d7a4f;text-decoration:none;display:flex;align-items:center;gap:2px;padding:3px 7px;border:0.5px solid #9fd4b8;border-radius:20px;background:#eef7f2"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>MOC</a>
+        <a href="https://docs.google.com/spreadsheets/d/1J8833aM0abL9iTD0-GGMGlnkPc5vkqHRDXpvkWR8jrk/edit" target="_blank" style="font-size:11px;color:#cc2244;text-decoration:none;display:flex;align-items:center;gap:2px;padding:3px 7px;border:0.5px solid #f0b3c0;border-radius:20px;background:#fceef1"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>LFM-ROUGE</a>
+      </div>
       <button class="refresh-btn" onclick="refreshAll()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         Actualiser
@@ -176,13 +189,9 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
     <button class="tab-btn" onclick="switchTab(2)">
       <span class="tab-dot" style="background:#cc2244"></span>LFM &amp; Rouge
     </button>
-  </div>
-
-  <div style="background:var(--surface);border-bottom:0.5px solid var(--border);padding:5px 1.25rem;display:flex;gap:16px;align-items:center">
-    <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-faint)">Sheets</span>
-    <a href="https://docs.google.com/spreadsheets/d/15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c/edit" target="_blank" style="font-size:11px;color:#0057a8;text-decoration:none;display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>ONE &amp; LAC</a>
-    <a href="https://docs.google.com/spreadsheets/d/116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8/edit" target="_blank" style="font-size:11px;color:#2d7a4f;text-decoration:none;display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>MOC</a>
-    <a href="https://docs.google.com/spreadsheets/d/1J8833aM0abL9iTD0-GGMGlnkPc5vkqHRDXpvkWR8jrk/edit" target="_blank" style="font-size:11px;color:#cc2244;text-decoration:none;display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>LFM &amp; ROUGE</a>
+    <button class="tab-btn" onclick="switchTab(3)">
+      <span class="tab-dot" style="background:#888"></span>Tous
+    </button>
   </div>
 
   <div class="search-bar">
@@ -200,6 +209,7 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
     <div class="tab-panel active" id="panel-0"></div>
     <div class="tab-panel" id="panel-1"></div>
     <div class="tab-panel" id="panel-2"></div>
+    <div class="tab-panel" id="panel-3"></div>
   </main>
 </div>
 
@@ -251,7 +261,7 @@ const SHEETS=[
 // Mapping abrév → jour complet pour les dates du Paléo 2026
 const DAY_MAP={'mar':'Mardi','mer':'Mercredi','jeu':'Jeudi','ven':'Vendredi','sam':'Samedi','dim':'Dimanche','lun':'Lundi'};
 
-let accessToken=null,sheetData=[[],[],[]],currentEditWinner=null,currentEditPaleo=null;
+let accessToken=null,sheetData=[[],[],[]],currentEditWinner=null,currentEditPaleo=null,activeFilter='';
 
 /* AUTH */
 function initGoogle(){
@@ -295,7 +305,7 @@ async function loadSheet(idx){
     renderPanel(idx);
   }catch(e){document.getElementById('panel-'+s.panel).innerHTML=`<div class="loading" style="color:#cc2244">Erreur : ${e.message}</div>`;}
 }
-async function loadAllSheets(){for(let i=0;i<3;i++) await loadSheet(i);}
+async function loadAllSheets(){for(let i=0;i<3;i++) await loadSheet(i);renderAllPanel();}
 function refreshAll(){loadAllSheets();showToast('Actualisation en cours...');}
 
 /* HELPERS */
@@ -359,6 +369,14 @@ function renderPanel(idx){
     <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
     <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
   </div>
+  <div class="filter-bar">
+    <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Filtrer :</span>
+    <button class="filter-btn ${activeFilter===''?'active':''}" onclick="setFilter('',${idx})">Tous</button>
+    <button class="filter-btn f-attente ${activeFilter==='attente'?'active':''}" onclick="setFilter('attente',${idx})">En attente</button>
+    <button class="filter-btn f-contact ${activeFilter==='contact'?'active':''}" onclick="setFilter('contact',${idx})">Contact fait</button>
+    <button class="filter-btn f-repondu ${activeFilter==='repondu'?'active':''}" onclick="setFilter('repondu',${idx})">A répondu</button>
+    <button class="filter-btn f-billets ${activeFilter==='billets'?'active':''}" onclick="setFilter('billets',${idx})">Billets expédiés</button>
+  </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
     <th>Ant.</th><th>Date</th><th>#</th><th>Jeu</th>
@@ -366,7 +384,17 @@ function renderPanel(idx){
     <th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
 
-  groups.forEach(g=>{
+  const filteredGroups = activeFilter ? groups.filter(g=>{
+    if(!(g.main[0]||'').trim()) return true; // keep empty rows
+    const st=(g.main[4]||'').toLowerCase();
+    if(activeFilter==='attente') return !st||st==='en attente';
+    if(activeFilter==='contact') return st.includes('contact');
+    if(activeFilter==='repondu') return st.includes('répondu')||st.includes('repondu');
+    if(activeFilter==='billets') return st.includes('expédié')||st.includes('expedie')||st.includes('billet');
+    return true;
+  }) : groups;
+
+  filteredGroups.forEach(g=>{
     const r=g.main;
     const ant=(r[0]||'').trim();
     const ak=antKey(ant);
@@ -410,11 +438,11 @@ function renderPanel(idx){
       <option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option>
       <option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option>
     </select>`:''}</td>`;
-    const mailCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}')">
+    const mailCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail
     </button>`:''}</td>`;
 
-    const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant);
+    const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
     const drAttr=ant?` data-row="${mIdx}"`:'';
     html+=`<tr${rowCls}${drAttr}>${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
 
@@ -428,12 +456,14 @@ function renderPanel(idx){
   html+='</tbody></table></div></div>';
   panel.innerHTML=html;
   updateSendBadge();
+  if(activeFilter) document.getElementById('panel-'+s.panel).querySelectorAll('tr.empty-row').forEach(r=>r.style.display='none');
 }
 
-function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant){
+function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,pMail2){
   const filled=pNom||pPre||pMail;
   const txt=filled?`${pNom} ${pPre} — ${pMail}`:'non renseigné';
-  const editBtn=ant?`<button class="btn-edit-paleo" onclick="openPaleoModal(${idx},${rowNum},'${jsEsc(bNo)}','${jsEsc(pNom)}','${jsEsc(pPre)}','${jsEsc(pMail)}')" title="Modifier données Paléo">
+  const extraArg=extraRow?`,${extraRow},'${jsEsc(pNom2||'')}','${jsEsc(pPre2||'')}','${jsEsc(pMail2||'')}'`:",null,'','',''";
+  const editBtn=ant?`<button class="btn-edit-paleo" onclick="openPaleoModal(${idx},${rowNum},'${jsEsc(bNo)}','${jsEsc(pNom)}','${jsEsc(pPre)}','${jsEsc(pMail)}'${extraArg})" title="Modifier données Paléo">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
   </button>`:'';
   return `<td style="max-width:200px">
@@ -486,26 +516,56 @@ async function saveWinner(){
 }
 
 /* PALEO MODAL */
-function openPaleoModal(idx,row,bNo,pNom,pPre,pMail){
-  currentEditPaleo={idx,row};
+function openPaleoModal(idx,row,bNo,pNom,pPre,pMail,extraRow,pNom2,pPre2,pMail2){
+  currentEditPaleo={idx,row,extraRow:extraRow||null};
   document.getElementById('mp-sub').textContent=`Billet N°${bNo} — ${SHEETS[idx].name}`;
+  const hasExtra = currentEditPaleo && currentEditPaleo.extraRow !== null;
   document.getElementById('mp-fields').innerHTML=`
+    <p style="font-size:11px;color:var(--text-muted);margin-bottom:.75rem">Billet principal</p>
     <div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="mp-nom" type="text" placeholder="Dupont" value="${esc(pNom)}" /></div>
     <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" id="mp-prenom" type="text" placeholder="Marie" value="${esc(pPre)}" /></div>
-    <div class="form-group"><label class="form-label">Email compte Paléo Tickets</label><input class="form-input" id="mp-email" type="email" placeholder="marie@email.com" value="${esc(pMail)}" /></div>`;
+    <div class="form-group"><label class="form-label">Email compte Paléo Tickets</label><input class="form-input" id="mp-email" type="email" placeholder="marie@email.com" value="${esc(pMail)}" /></div>
+    ${hasExtra ? `
+    <div style="display:flex;align-items:center;gap:8px;margin:1rem 0 .5rem;padding:.6rem .75rem;background:var(--bg);border-radius:var(--r);border:0.5px solid var(--border)">
+      <input type="checkbox" id="mp-split" style="width:14px;height:14px;cursor:pointer" onchange="toggleSplit()" />
+      <label for="mp-split" style="font-size:12px;cursor:pointer;color:var(--text)">2 billets sur des comptes différents</label>
+    </div>
+    <div id="mp-extra-fields" style="display:none">
+      <p style="font-size:11px;color:var(--text-muted);margin-bottom:.75rem">2e billet — compte différent</p>
+      <div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="mp-nom2" type="text" placeholder="Dupont" value="${esc(pNom2||'')}" /></div>
+      <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" id="mp-prenom2" type="text" placeholder="Jean" value="${esc(pPre2||'')}" /></div>
+      <div class="form-group"><label class="form-label">Email compte Paléo Tickets</label><input class="form-input" id="mp-email2" type="email" placeholder="jean@email.com" value="${esc(pMail2||'')}" /></div>
+    </div>` : ''}
+  `;
   document.getElementById('modal-paleo').classList.add('open');
   setTimeout(()=>document.getElementById('mp-nom').focus(),50);
 }
+function toggleSplit(){
+  const checked=document.getElementById('mp-split').checked;
+  document.getElementById('mp-extra-fields').style.display=checked?'block':'none';
+}
+
 async function savePaleo(){
   if(!currentEditPaleo)return;
-  const {idx,row}=currentEditPaleo;
+  const {idx,row,extraRow}=currentEditPaleo;
   const nom=document.getElementById('mp-nom').value.trim();
   const pre=document.getElementById('mp-prenom').value.trim();
   const mail=document.getElementById('mp-email').value.trim();
+  const split=document.getElementById('mp-split')?.checked||false;
   const btn=document.getElementById('mp-save-btn');
   btn.disabled=true;btn.textContent='Enregistrement...';
   try{
     await sheetWrite(SHEETS[idx].id,`I${row}:K${row}`,[[nom,pre,mail]]);
+    if(extraRow){
+      if(split){
+        const nom2=document.getElementById('mp-nom2').value.trim();
+        const pre2=document.getElementById('mp-prenom2').value.trim();
+        const mail2=document.getElementById('mp-email2').value.trim();
+        await sheetWrite(SHEETS[idx].id,`I${extraRow}:K${extraRow}`,[[nom2,pre2,mail2]]);
+      } else {
+        await sheetWrite(SHEETS[idx].id,`I${extraRow}:K${extraRow}`,[[nom,pre,mail]]);
+      }
+    }
     closeModal('modal-paleo');showToast('Données Paléo Tickets enregistrées');
     await loadSheet(idx);
   }catch(e){showToast('Erreur : '+e.message);}
@@ -523,19 +583,22 @@ async function sheetWrite(sheetId,range,values){
 }
 
 /* MAIL */
-function buildMailHTML(ak,dateRaw){
+function buildMailHTML(ak,dateRaw,nomRaw){
   const date=fmtDate(dateRaw);
   const tutoie=ak==='O'||ak==='Rouge';
+  const rawFirst=(nomRaw||'').trim().split(/\s+/)[0]||'';
+  const prenom=rawFirst?rawFirst.charAt(0).toUpperCase()+rawFirst.slice(1).toLowerCase():'';
+  const bonjour=prenom?`Bonjour ${prenom},`:'Bonjour,';
   const andLink='https://play.google.com/store/apps/details?id=io.tixngo.app.paleo22&hl=fr_CH&gl=US';
   const iosLink='https://apps.apple.com/us/app/pal%C3%A9o-tickets/id1589046996';
   const faqLink='https://yeah.paleo.ch/fr/faq-paleo-tickets';
   const progLink='https://yeah.paleo.ch/fr/programme';
-  if(tutoie){return `Bonjour,<br><br>Tu as gagné deux places pour le Paléo pour la soirée du <strong>${date}</strong>.<br>Tu peux consulter le programme de cette soirée <a href="${progLink}">ici</a>.<br><br>Les billets seront transmis sur l'application Paléo Tickets que tu dois installer sur ton téléphone :<br>&nbsp;- <a href="${andLink}">clique ici pour le lien sur Android</a><br>&nbsp;- <a href="${iosLink}">clique ici pour le lien sur iPhone</a><br>Et si tu ne comprends pas tout comment ça marche, les infos se trouvent <a href="${faqLink}">là</a> !<br><br>Ensuite, si tu as déjà un compte Paléo Tickets, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>qui sont liés à ce compte.<br><br>Si tu n'as pas encore de compte, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>avec lesquels tu vas créer ce compte.<br><br>Attention, les billets seront ensuite dans <strong>TON</strong> téléphone, sur ton application.<br>Si tu le souhaites, tu peux nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.<br><br>Nous sommes toujours à disposition en cas de questions.`;}
-  return `Bonjour,<br><br>Vous avez gagné deux places pour le Paléo pour la soirée du <strong>${date}</strong>.<br>Vous pouvez consulter le programme de cette soirée <a href="${progLink}">ici</a>.<br><br>Les billets seront transmis sur l'application Paléo Tickets que vous devez installer sur votre téléphone :<br>&nbsp;- <a href="${andLink}">cliquez ici pour le lien sur Android</a><br>&nbsp;- <a href="${iosLink}">cliquez ici pour le lien sur iPhone</a><br>Et si vous ne comprenez pas tout comment ça marche, les infos se trouvent <a href="${faqLink}">là</a> !<br><br>Ensuite, si vous avez déjà un compte Paléo Tickets, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>qui sont liés à ce compte.<br><br>Si vous n'avez pas encore de compte, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>avec lesquels vous allez créer ce compte.<br><br>Attention, les billets seront ensuite dans <strong>VOTRE</strong> téléphone, sur votre application.<br>Si vous le souhaitez, vous pouvez nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.<br><br>Nous sommes toujours à disposition en cas de questions.`;
+  if(tutoie){return `${bonjour}<br><br>Tu as gagné deux places pour le Paléo pour la soirée du <strong>${date}</strong>.<br>Tu peux consulter le programme de cette soirée <a href="${progLink}">ici</a>.<br><br>Les billets seront transmis sur l'application Paléo Tickets que tu dois installer sur ton téléphone :<br>&nbsp;- <a href="${andLink}">clique ici pour le lien sur Android</a><br>&nbsp;- <a href="${iosLink}">clique ici pour le lien sur iPhone</a><br>Et si tu ne comprends pas tout comment ça marche, les infos se trouvent <a href="${faqLink}">là</a> !<br><br>Ensuite, si tu as déjà un compte Paléo Tickets, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>qui sont liés à ce compte.<br><br>Si tu n'as pas encore de compte, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>avec lesquels tu vas créer ce compte.<br><br>Attention, les billets seront ensuite dans <strong>TON</strong> téléphone, sur ton application.<br>Si tu le souhaites, tu peux nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.<br><br>Nous sommes toujours à disposition en cas de questions.`;}
+  return `${bonjour}<br><br>Vous avez gagné deux places pour le Paléo pour la soirée du <strong>${date}</strong>.<br>Vous pouvez consulter le programme de cette soirée <a href="${progLink}">ici</a>.<br><br>Les billets seront transmis sur l'application Paléo Tickets que vous devez installer sur votre téléphone :<br>&nbsp;- <a href="${andLink}">cliquez ici pour le lien sur Android</a><br>&nbsp;- <a href="${iosLink}">cliquez ici pour le lien sur iPhone</a><br>Et si vous ne comprenez pas tout comment ça marche, les infos se trouvent <a href="${faqLink}">là</a> !<br><br>Ensuite, si vous avez déjà un compte Paléo Tickets, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>qui sont liés à ce compte.<br><br>Si vous n'avez pas encore de compte, il faut me donner :<br>&nbsp;- l'adresse mail,<br>&nbsp;- le nom<br>&nbsp;- et le prénom<br>avec lesquels vous allez créer ce compte.<br><br>Attention, les billets seront ensuite dans <strong>VOTRE</strong> téléphone, sur votre application.<br>Si vous le souhaitez, vous pouvez nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.<br><br>Nous sommes toujours à disposition en cas de questions.`;
 }
 
-function copyMail(btn,ak,dateRaw){
-  const html=buildMailHTML(ak,dateRaw);
+function copyMail(btn,ak,dateRaw,nomRaw){
+  const html=buildMailHTML(ak,dateRaw,nomRaw);
   const plain=html.replace(/<a href="([^"]+)">([^<]+)<\/a>/g,'$2 ($1)').replace(/<br>/g,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').trim();
   try{
     navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([plain],{type:'text/plain'})})]).then(()=>{
@@ -624,9 +687,117 @@ function clearSearch(){
   document.getElementById('search-nav').classList.remove('visible');
 }
 
+function setFilter(f,idx){
+  activeFilter=f;
+  if(idx===3) renderAllPanel();
+  else renderPanel(idx);
+}
+
+function renderAllPanel(){
+  const panel=document.getElementById('panel-3');
+
+  // Collect all rows from all sheets with sheet index
+  let allGroups=[];
+  for(let si=0;si<3;si++){
+    const rows=(sheetData[si]||[]).slice(1);
+    const groups=buildGroups(rows);
+    groups.forEach(g=>{
+      if((g.main[0]||'').trim()) allGroups.push({...g, sheetIdx:si});
+    });
+  }
+
+  // Sort by date — extract day number from col B
+  allGroups.sort((a,b)=>{
+    const da=parseInt((a.main[1]||'').match(/\d+/)?.[0]||99);
+    const db=parseInt((b.main[1]||'').match(/\d+/)?.[0]||99);
+    return da-db;
+  });
+
+  // Filter
+  if(activeFilter){
+    allGroups=allGroups.filter(g=>{
+      const st=(g.main[4]||'').toLowerCase();
+      if(activeFilter==='attente') return !st||st==='en attente';
+      if(activeFilter==='contact') return st.includes('contact');
+      if(activeFilter==='repondu') return st.includes('répondu')||st.includes('repondu');
+      if(activeFilter==='billets') return st.includes('expédié')||st.includes('expedie')||st.includes('billet');
+      return true;
+    });
+  }
+
+  let total=allGroups.length;
+  let contact=allGroups.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('contact');}).length;
+  let repondu=allGroups.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('répondu')||st.includes('repondu');}).length;
+  let billets=allGroups.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('expédié')||st.includes('expedie')||st.includes('billet');}).length;
+  let attenteN=total-contact-repondu-billets;
+
+  let html=`<div class="stats-bar">
+    <div class="stat-pill"><strong>${total}</strong> gagnants</div>
+    <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${attenteN}</strong> en attente</div>
+    <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
+    <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
+    <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
+  </div>
+  <div class="filter-bar">
+    <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Filtrer :</span>
+    <button class="filter-btn ${activeFilter===''?'active':''}" onclick="setFilter('',3)">Tous</button>
+    <button class="filter-btn f-attente ${activeFilter==='attente'?'active':''}" onclick="setFilter('attente',3)">En attente</button>
+    <button class="filter-btn f-contact ${activeFilter==='contact'?'active':''}" onclick="setFilter('contact',3)">Contact fait</button>
+    <button class="filter-btn f-repondu ${activeFilter==='repondu'?'active':''}" onclick="setFilter('repondu',3)">A répondu</button>
+    <button class="filter-btn f-billets ${activeFilter==='billets'?'active':''}" onclick="setFilter('billets',3)">Billets expédiés</button>
+  </div>
+  <div class="table-wrap"><div class="table-scroll"><table>
+  <thead><tr>
+    <th>Ant.</th><th>Date</th><th>#</th><th>Jeu</th>
+    <th>Nom &amp; Prénom</th><th>Téléphone</th><th>Email</th>
+    <th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
+  </tr></thead><tbody>`;
+
+  allGroups.forEach(g=>{
+    const idx=g.sheetIdx;
+    const r=g.main;
+    const ant=(r[0]||'').trim();
+    const ak=antKey(ant);
+    const date=r[1]||'';
+    const bNo=r[2]||'';
+    const jeu=r[3]||'';
+    const statut=r[4]||'en attente';
+    const nom=r[5]||'';
+    const tel=r[6]||'';
+    const email=r[7]||'';
+    const pNom1=r[8]||'',pPre1=r[9]||'',pMail1=r[10]||'';
+    const re=g.extra||[];
+    const pNom2=re[8]||'',pPre2=re[9]||'',pMail2=re[10]||'';
+    const sp=g.span;
+    const mIdx=g.mainIdx;
+    const sc=sClass(statut);
+    const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    const antCell=`<td rowspan="${sp}" style="vertical-align:middle"><span class="ant-badge ant-${ak}">${antLabel(ant)}</span></td>`;
+    const dateCell=`<td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-muted);font-size:11px">${fmtDate(date)}</td>`;
+    const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:120px"><div class="inline-field"><div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
+    const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:140px"><div class="inline-field"><div class="editable-val ${nom?'':'empty'}">${esc(nom)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
+    const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
+    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)">${esc(email)}</td>`;
+    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${sc}" onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
+    const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
+    const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
+    html+=`<tr data-row="${mIdx}">${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
+    if(g.extra){
+      const bNo2=g.extra[2]||'';
+      const paleoCell2=buildPaleoCell(idx,g.extraIdx,bNo2,pNom2,pPre2,pMail2,ant);
+      html+=`<tr><td style="text-align:center;color:var(--text-faint)">${esc(bNo2)}</td>${paleoCell2}</tr>`;
+    }
+  });
+
+  html+='</tbody></table></div></div>';
+  panel.innerHTML=html;
+  updateSendBadge();
+}
+
 function switchTab(idx){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+  if(idx===3) renderAllPanel();
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');currentEditWinner=null;currentEditPaleo=null;}
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
