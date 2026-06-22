@@ -135,7 +135,9 @@ tr:hover .btn-edit-inline{opacity:1}
 .filter-btn.f-contact.active{background:#f3eeff;color:#5b33b0;border-color:#c4a8f5}
 .filter-btn.f-repondu.active{background:#fff0f0;color:#b02020;border-color:#f5a8a8}
 .filter-btn.f-billets.active{background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8}
-.send-badge{display:inline-flex;align-items:center;gap:5px;background:#fff4e0;color:#b35f00;border:0.5px solid #f0c070;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;cursor:default}
+.send-badge{display:inline-flex;align-items:center;gap:5px;background:#fff4e0;color:#b35f00;border:0.5px solid #f0c070;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:background .15s}
+.send-badge:hover{background:#fde8b0}
+.send-badge.active{background:#f3eeff;color:#5b33b0;border-color:#c4a8f5}
 .send-badge svg{width:13px;height:13px}
 tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
 #toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--text);color:var(--surface);padding:8px 14px;border-radius:var(--r);font-size:12px;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999}
@@ -649,10 +651,22 @@ function updateSendBadge(){
   const wrap=document.getElementById('send-badge-wrap');
   if(!wrap) return;
   if(count>0){
-    wrap.innerHTML=`<div class="send-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>${count} envoi${count>1?'s':''} possible${count>1?'s':''}</div>`;
+    const isActive=activeFilters.has('repondu');
+    wrap.innerHTML=`<div class="send-badge${isActive?' active':''}" onclick="toggleSendBadgeFilter()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>${count} envoi${count>1?'s':''} possible${count>1?'s':''}</div>`;
   } else {
     wrap.innerHTML='';
   }
+}
+function toggleSendBadgeFilter(){
+  if(activeFilters.has('repondu')){
+    activeFilters.delete('repondu');
+  } else {
+    activeFilters.clear();
+    activeFilters.add('repondu');
+    switchTab(3);
+  }
+  renderAllPanel();
+  updateSendBadge();
 }
 
 /* SEARCH */
