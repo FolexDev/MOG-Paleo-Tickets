@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paléo Tickets — Media One Group</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --border: #e8e6e0;
+    --border-strong: #ccc9c0;
+    --text: #1a1a18;
+    --text-muted: #6b6860;
+    --text-faint: #a09e99;
+    --one: #e8352a;
+    --one-bg: #fdf0ef;
+    --one-border: #f5b8b5;
+    --lac: #0057a8;
+    --lac-bg: #eef4fc;
+    --lac-border: #b3cef0;
+    --rouge: #cc2244;
+    --rouge-bg: #fceef1;
+    --rouge-border: #f0b3c0;
+    --lfm: #e07b00;
+    --lfm-bg: #fdf5e8;
+    --lfm-border: #f0d08a;
+    --moc: #2d7a4f;
+    --moc-bg: #eef7f2;
+    --moc-border: #9fd4b8;
+    --status-attente-bg: #f7f6f3;
+    --status-attente: #6b6860;
+    --status-contact-bg: #fdf5e8;
+    --status-contact: #854f0b;
+    --status-repondu-bg: #eef4fc;
+    --status-repondu: #185fa5;
+    --status-billets-bg: #eef7f2;
+    --status-billets: #1a6b3f;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* LOGIN */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .login-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 2rem;
+    width: 340px;
+    text-align: center;
+  }
+  .login-logo {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .login-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+  .login-error {
+    font-size: 12px;
+    color: var(--rouge);
+    margin-top: 1rem;
+    display: none;
+  }
+
+  /* APP */
+  #app { display: none; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-left { display: flex; align-items: center; gap: 1rem; }
+  .header-brand { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; }
+  .header-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border: 0.5px solid var(--border);
+    border-radius: 20px; padding: 4px 10px 4px 4px;
+    font-size: 12px; color: var(--text-muted);
+  }
+  .user-avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--text); color: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600;
+  }
+  .btn-logout {
+    font-size: 12px; color: var(--text-muted);
+    background: transparent; border: none; cursor: pointer; padding: 4px 8px;
+  }
+  .btn-logout:hover { color: var(--text); }
+
+  .refresh-btn {
+    background: transparent;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .refresh-btn:hover { background: var(--bg); color: var(--text); }
+  .refresh-btn svg { width: 13px; height: 13px; }
+
+  /* TABS */
+  .tabs-bar {
+    background: var(--surface);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex; gap: 0;
+  }
+  .tab-btn {
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -0.5px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
+  .tab-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* MAIN */
+  main { padding: 1.5rem; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex; gap: 10px; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .stat-pill strong { color: var(--text); font-weight: 600; }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--bg); }
+  th {
+    text-align: left;
+    padding: 9px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    border-bottom: 0.5px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 0.5px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafaf8; }
+  tr.empty td { color: var(--text-faint); font-style: italic; }
+
+  /* ANTENNE BADGE */
+  .ant-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .ant-O { background: var(--one-bg); color: var(--one); border: 0.5px solid var(--one-border); }
+  .ant-Lac { background: var(--lac-bg); color: var(--lac); border: 0.5px solid var(--lac-border); }
+  .ant-Rouge { background: var(--rouge-bg); color: var(--rouge); border: 0.5px solid var(--rouge-border); }
+  .ant-LFM { background: var(--lfm-bg); color: var(--lfm); border: 0.5px solid var(--lfm-border); }
+  .ant-MOC { background: var(--moc-bg); color: var(--moc); border: 0.5px solid var(--moc-border); }
+
+  /* STATUS SELECT */
+  .status-select {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 130px;
+  }
+  .status-select.s-attente { background: var(--status-attente-bg); color: var(--status-attente); border-color: var(--border-strong); }
+  .status-select.s-contact { background: var(--status-contact-bg); color: var(--status-contact); border-color: var(--lfm-border); }
+  .status-select.s-repondu { background: var(--status-repondu-bg); color: var(--status-repondu); border-color: var(--lac-border); }
+  .status-select.s-billets { background: var(--status-billets-bg); color: var(--status-billets); border-color: var(--moc-border); }
+
+  /* PALEO DATA */
+  .paleo-cell { display: flex; align-items: center; gap: 6px; }
+  .paleo-data { font-size: 12px; color: var(--text-muted); }
+  .paleo-data.filled { color: var(--text); }
+  .btn-edit-paleo {
+    width: 24px; height: 24px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .btn-edit-paleo:hover { background: var(--bg); color: var(--text); }
+  .btn-edit-paleo svg { width: 13px; height: 13px; }
+
+  /* COPY MAIL BTN */
+  .btn-copy-mail {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .btn-copy-mail:hover { background: var(--bg); color: var(--text); }
+  .btn-copy-mail.copied { background: var(--status-billets-bg); color: var(--status-billets); border-color: var(--moc-border); }
+  .btn-copy-mail svg { width: 13px; height: 13px; }
+
+  /* MODAL */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    width: 440px;
+    max-width: 95vw;
+    border: 0.5px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; }
+  .modal-title { font-size: 15px; font-weight: 600; }
+  .modal-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .modal-close { background: transparent; border: none; cursor: pointer; color: var(--text-muted); padding: 2px; }
+  .modal-close:hover { color: var(--text); }
+  .modal-close svg { width: 18px; height: 18px; }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .form-input {
+    width: 100%;
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+  }
+  .form-input:focus { outline: none; border-color: var(--lac); box-shadow: 0 0 0 3px rgba(0,87,168,0.1); }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+  .btn-cancel {
+    padding: 8px 16px; font-size: 13px;
+    background: transparent; border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius); cursor: pointer; color: var(--text-muted);
+    font-family: inherit;
+  }
+  .btn-cancel:hover { background: var(--bg); }
+  .btn-save {
+    padding: 8px 16px; font-size: 13px;
+    background: var(--text); color: var(--surface);
+    border: none; border-radius: var(--radius);
+    cursor: pointer; font-weight: 500;
+    font-family: inherit;
+  }
+  .btn-save:hover { opacity: 0.85; }
+  .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: var(--text); color: var(--surface);
+    padding: 10px 16px; border-radius: var(--radius);
+    font-size: 13px; font-weight: 500;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 999;
+  }
+  #toast.show { opacity: 1; }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 3rem; color: var(--text-faint); font-size: 13px; }
+  .spin {
+    display: inline-block; width: 18px; height: 18px;
+    border: 2px solid var(--border); border-top-color: var(--text-muted);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 768px) {
+    main { padding: 1rem; }
+    header { padding: 0 1rem; }
+    .tabs-bar { padding: 0 1rem; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Media One Group</div>
+    <div class="login-title">Paléo Tickets</div>
+    <div class="login-sub">Gestion de la distribution des billets</div>
+    <div id="g_signin_btn"></div>
+    <div class="login-error" id="login-error">Accès non autorisé. Connectez-vous avec votre compte Media One Group.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="header-left">
+      <span class="header-brand">MOG</span>
+      <span class="header-title">Paléo Tickets 2025</span>
+    </div>
+    <div class="header-right">
+      <button class="refresh-btn" onclick="refreshAll()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Actualiser
+      </button>
+      <div class="user-chip">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <span id="user-name">—</span>
+      </div>
+      <button class="btn-logout" onclick="signOut()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab(0)" data-tab="0">
+      <span class="tab-dot" style="background:#e8352a"></span>One FM &amp; Radio Lac
+    </button>
+    <button class="tab-btn" onclick="switchTab(1)" data-tab="1">
+      <span class="tab-dot" style="background:#2d7a4f"></span>Carac &amp; MOC
+    </button>
+    <button class="tab-btn" onclick="switchTab(2)" data-tab="2">
+      <span class="tab-dot" style="background:#cc2244"></span>LFM &amp; Rouge
+    </button>
+  </div>
+
+  <main>
+    <div class="tab-panel active" id="panel-0"></div>
+    <div class="tab-panel" id="panel-1"></div>
+    <div class="tab-panel" id="panel-2"></div>
+  </main>
+</div>
+
+<!-- MODAL PALÉO TICKETS -->
+<div class="modal-bg" id="modal-paleo">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-paleo-title">Données Paléo Tickets</div>
+        <div class="modal-sub" id="modal-paleo-sub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nom</label>
+      <input class="form-input" id="m-nom" type="text" placeholder="Dupont" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Prénom</label>
+      <input class="form-input" id="m-prenom" type="text" placeholder="Marie" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email compte Paléo Tickets</label>
+      <input class="form-input" id="m-email" type="email" placeholder="marie.dupont@email.com" />
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" id="modal-save-btn" onclick="savePaleoData()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const CLIENT_ID = '254325008139-rp0p175m2icjv0pr6jv9vp52n9jjpdik.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyBw5-W46qmpeWn79XKtiqE1CZuiXXkHWH8';
+const ALLOWED = ['alex@mediaonegroup.ch','lionel@mediaonegroup.ch'];
+
+const SHEETS = [
+  {
+    id: '15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c',
+    gid: '2112706330',
+    name: 'DISTRIBUTION ONE & LAC',
+    panel: 0
+  },
+  {
+    id: '116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8',
+    gid: '258759709',
+    name: 'DISTRIBUTION Carac-MOC',
+    panel: 1
+  },
+  {
+    id: '1J8833aM0abL9iTD0-GGMGlnkPc5vkqHRDXpvkWR8jrk',
+    gid: '258759709',
+    name: 'DISTRIBUTION LFM & ROUGE',
+    panel: 2
+  }
+];
+
+let accessToken = null;
+let currentEdit = null;
+let sheetData = [{}, {}, {}];
+
+function initGoogle() {
+  google.accounts.id.initialize({
+    client_id: CLIENT_ID,
+    callback: handleCredential,
+    auto_select: false
+  });
+  google.accounts.id.renderButton(
+    document.getElementById('g_signin_btn'),
+    { theme: 'outline', size: 'large', text: 'signin_with', locale: 'fr', width: 260 }
+  );
+}
+
+function handleCredential(response) {
+  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  const email = payload.email;
+  if (!ALLOWED.includes(email.toLowerCase())) {
+    document.getElementById('login-error').style.display = 'block';
+    return;
+  }
+  const initials = (payload.given_name?.[0] || '') + (payload.family_name?.[0] || '');
+  document.getElementById('user-avatar').textContent = initials.toUpperCase();
+  document.getElementById('user-name').textContent = payload.given_name || email;
+  requestAccessToken();
+}
+
+function requestAccessToken() {
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    callback: (tokenResponse) => {
+      if (tokenResponse.access_token) {
+        accessToken = tokenResponse.access_token;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        loadAllSheets();
+      }
+    }
+  });
+  client.requestAccessToken();
+}
+
+function signOut() {
+  google.accounts.id.disableAutoSelect();
+  accessToken = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+async function loadSheet(idx) {
+  const s = SHEETS[idx];
+  const panel = document.getElementById('panel-' + s.panel);
+  panel.innerHTML = '<div class="loading"><span class="spin"></span>Chargement...</div>';
+  try {
+    const range = encodeURIComponent('A:K');
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${s.id}/values/${range}?key=${API_KEY}`;
+    const resp = await fetch(url, {
+      headers: { Authorization: 'Bearer ' + accessToken }
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    sheetData[idx] = data.values || [];
+    renderPanel(idx, sheetData[idx]);
+  } catch(e) {
+    document.getElementById('panel-' + SHEETS[idx].panel).innerHTML =
+      `<div class="loading" style="color:#cc2244">Erreur : ${e.message}</div>`;
+  }
+}
+
+async function loadAllSheets() {
+  for (let i = 0; i < SHEETS.length; i++) await loadSheet(i);
+}
+
+function refreshAll() { loadAllSheets(); showToast('Actualisation en cours...'); }
+
+function getStatusClass(s) {
+  if (!s) return 's-attente';
+  const v = s.toLowerCase();
+  if (v.includes('expédié') || v.includes('expedie') || v.includes('billet')) return 's-billets';
+  if (v.includes('répondu') || v.includes('repondu')) return 's-repondu';
+  if (v.includes('contact')) return 's-contact';
+  return 's-attente';
+}
+
+function getStatusLabel(s) {
+  if (!s || s.toLowerCase() === 'en attente') return 'en attente';
+  return s;
+}
+
+function getAntenne(val) {
+  if (!val) return '';
+  const v = val.trim();
+  if (v === 'O') return 'One FM';
+  if (v === 'Lac') return 'Radio Lac';
+  if (v === 'Rouge') return 'Rouge FM';
+  if (v === 'LFM') return 'LFM';
+  return v;
+}
+
+function getAntKey(val) {
+  if (!val) return '';
+  const v = val.trim();
+  if (v === 'O') return 'O';
+  if (v === 'Lac') return 'Lac';
+  if (v === 'Rouge') return 'Rouge';
+  if (v === 'LFM') return 'LFM';
+  return 'MOC';
+}
+
+function formatDate(raw) {
+  if (!raw) return '';
+  return raw.trim().replace(/^\w+\.\s*/, '');
+}
+
+function buildMailText(antKey, dateRaw) {
+  const date = formatDate(dateRaw);
+  const isTutoie = (antKey === 'O' || antKey === 'Rouge');
+  const links = `\n - ${isTutoie ? 'clique' : 'cliquez'} ici pour le lien sur androïd : https://play.google.com/store/apps/details?id=io.tixngo.app.paleo22&hl=fr_CH&gl=US\n - ${isTutoie ? 'clique' : 'cliquez'} ici pour le lien sur iPhone : https://apps.apple.com/us/app/pal%C3%A9o-tickets/id1589046996\net si ${isTutoie ? 'tu ne comprends pas tout' : 'vous ne comprenez pas tout'} comment ça marche, les infos se trouvent là : https://yeah.paleo.ch/fr/faq-paleo-tickets`;
+
+  if (isTutoie) {
+    return `Bonjour,\nTu as gagné deux places pour le Paléo pour la soirée du ${date}.\nles billets seront transmis sur l'application Paléo Tickets que tu dois installer sur ton téléphone :${links}\nEnsuite, si tu as déjà un compte Paléo Tickets, il faut me donner :\n - l'adresse mail,\n - le nom\n - et le prénom\nqui sont liés à ce compte.\nSi tu n'as pas encore de compte, il faut me donner :\n - l'adresse mail,\n - le nom\n - et le prénom\navec lesquels tu vas créer ce compte.\nAttention, les billets seront ensuite dans TON téléphone, sur ton application.\nSi tu le souhaites, tu peux nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.\nNous sommes toujours à disposition en cas de questions.`;
+  } else {
+    return `Bonjour,\nVous avez gagné deux places pour le Paléo pour la soirée du ${date}.\nles billets seront transmis sur l'application Paléo Tickets que vous devez installer sur votre téléphone :${links}\nEnsuite, si vous avez déjà un compte Paléo Tickets, il faut me donner :\n - l'adresse mail,\n - le nom\n - et le prénom\nqui sont liés à ce compte.\nSi vous n'avez pas encore de compte, il faut me donner :\n - l'adresse mail,\n - le nom\n - et le prénom\navec lesquels vous allez créer ce compte.\nAttention, les billets seront ensuite dans VOTRE téléphone, sur votre application.\nSi vous le souhaitez, vous pouvez nous remettre deux adresses mails, deux noms et deux prénoms, et dans ce cas nous enverrons 1 billet sur chaque compte.\nNous sommes toujours à disposition en cas de questions.`;
+  }
+}
+
+function renderPanel(idx, rows) {
+  const s = SHEETS[idx];
+  const panel = document.getElementById('panel-' + s.panel);
+
+  const dataRows = rows.slice(1);
+
+  const statCounts = { total: 0, contact: 0, repondu: 0, billets: 0 };
+  dataRows.forEach(r => {
+    const ant = (r[0] || '').trim();
+    if (!ant) return;
+    statCounts.total++;
+    const st = (r[4] || '').toLowerCase();
+    if (st.includes('contact')) statCounts.contact++;
+    if (st.includes('répondu') || st.includes('repondu')) statCounts.repondu++;
+    if (st.includes('expédié') || st.includes('expedie') || st.includes('billet')) statCounts.billets++;
+  });
+
+  let html = `
+  <div class="stats-bar">
+    <div class="stat-pill"><strong>${statCounts.total}</strong> gagnants</div>
+    <div class="stat-pill"><strong>${statCounts.contact}</strong> contactés</div>
+    <div class="stat-pill"><strong>${statCounts.repondu}</strong> réponses reçues</div>
+    <div class="stat-pill" style="background:var(--status-billets-bg);color:var(--status-billets)"><strong>${statCounts.billets}</strong> billets expédiés</div>
+  </div>
+  <div class="table-wrap"><div class="table-scroll">
+  <table>
+  <thead><tr>
+    <th>Antenne</th>
+    <th>Date</th>
+    <th>Billet N°</th>
+    <th>Gagnant</th>
+    <th>Téléphone</th>
+    <th>Email</th>
+    <th>Statut</th>
+    <th>Données Paléo Tickets</th>
+    <th>Mail</th>
+  </tr></thead>
+  <tbody>`;
+
+  dataRows.forEach((r, ri) => {
+    const ant = (r[0] || '').trim();
+    const date = r[1] || '';
+    const billetNo = r[2] || '';
+    const statut = r[4] || 'en attente';
+    const nom = r[5] || '';
+    const tel = r[6] || '';
+    const email = r[7] || '';
+    const paleoNom = r[8] || '';
+    const paleoPrenom = r[9] || '';
+    const paleoEmail = r[10] || '';
+    const antKey = getAntKey(ant);
+    const isEmpty = !ant && !nom;
+    const realRow = ri + 2;
+
+    const statusCls = getStatusClass(statut);
+    const paleoFilled = paleoNom || paleoPrenom || paleoEmail;
+    const paleoCellText = paleoFilled
+      ? `${paleoPrenom} ${paleoNom} — ${paleoEmail}`
+      : '<span style="color:var(--text-faint);font-style:italic">non renseigné</span>';
+
+    const mailBtn = ant ? `<button class="btn-copy-mail" onclick="copyMail(this,'${antKey}','${date.replace(/'/g,"\\'")}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Mail
+    </button>` : '';
+
+    const editBtn = ant ? `<button class="btn-edit-paleo" onclick="openPaleoModal(${idx},${realRow},'${(nom || '').replace(/'/g,"\\'")}','${paleoNom.replace(/'/g,"\\'")}','${paleoPrenom.replace(/'/g,"\\'")}','${paleoEmail.replace(/'/g,"\\'")}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>` : '';
+
+    const rowCls = isEmpty ? ' class="empty"' : '';
+
+    html += `<tr${rowCls}>
+      <td>${ant ? `<span class="ant-badge ant-${antKey}">${getAntenne(ant)}</span>` : ''}</td>
+      <td style="white-space:nowrap;color:var(--text-muted)">${formatDate(date)}</td>
+      <td style="text-align:center;color:var(--text-muted)">${billetNo}</td>
+      <td><div>${nom}</div>${email ? `<div style="font-size:11px;color:var(--text-muted)">${email}</div>` : ''}</td>
+      <td style="color:var(--text-muted);font-size:12px">${tel}</td>
+      <td style="font-size:12px;color:var(--text-muted)">${email}</td>
+      <td>${ant ? `<select class="status-select ${statusCls}" onchange="updateStatus(this,${idx},${realRow})" data-row="${realRow}" data-idx="${idx}">
+        <option value="en attente" ${statut==='en attente'||!statut?'selected':''}>En attente</option>
+        <option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option>
+        <option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option>
+        <option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option>
+      </select>` : ''}</td>
+      <td>
+        <div class="paleo-cell">
+          <div class="paleo-data ${paleoFilled ? 'filled' : ''}">${paleoCellText}</div>
+          ${editBtn}
+        </div>
+      </td>
+      <td>${mailBtn}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table></div></div>';
+  panel.innerHTML = html;
+}
+
+async function updateStatus(select, sheetIdx, rowNum) {
+  const val = select.value;
+  select.className = 'status-select ' + getStatusClass(val);
+  const s = SHEETS[sheetIdx];
+  const range = encodeURIComponent(`E${rowNum}`);
+  try {
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${s.id}/values/${range}?valueInputOption=RAW`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ values: [[val]] })
+    });
+    showToast('Statut mis à jour');
+  } catch(e) {
+    showToast('Erreur : ' + e.message);
+  }
+}
+
+function openPaleoModal(sheetIdx, rowNum, gagnantNom, paleoNom, paleoPrenom, paleoEmail) {
+  currentEdit = { sheetIdx, rowNum };
+  document.getElementById('modal-paleo-title').textContent = 'Données Paléo Tickets';
+  document.getElementById('modal-paleo-sub').textContent = gagnantNom || `Ligne ${rowNum}`;
+  document.getElementById('m-nom').value = paleoNom || '';
+  document.getElementById('m-prenom').value = paleoPrenom || '';
+  document.getElementById('m-email').value = paleoEmail || '';
+  document.getElementById('modal-paleo').classList.add('open');
+  document.getElementById('m-nom').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal-paleo').classList.remove('open');
+  currentEdit = null;
+}
+
+async function savePaleoData() {
+  if (!currentEdit) return;
+  const nom = document.getElementById('m-nom').value.trim();
+  const prenom = document.getElementById('m-prenom').value.trim();
+  const email = document.getElementById('m-email').value.trim();
+  const { sheetIdx, rowNum } = currentEdit;
+  const s = SHEETS[sheetIdx];
+  const btn = document.getElementById('modal-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement...';
+  try {
+    const range = encodeURIComponent(`I${rowNum}:K${rowNum}`);
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${s.id}/values/${range}?valueInputOption=RAW`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ values: [[nom, prenom, email]] })
+    });
+    closeModal();
+    showToast('Données Paléo Tickets enregistrées');
+    await loadSheet(sheetIdx);
+  } catch(e) {
+    showToast('Erreur : ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enregistrer';
+  }
+}
+
+function copyMail(btn, antKey, dateRaw) {
+  const text = buildMailText(antKey, dateRaw);
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copié`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Mail`;
+    }, 2000);
+  });
+}
+
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.getElementById('modal-paleo').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+window.addEventListener('load', () => {
+  if (typeof google !== 'undefined' && google.accounts) initGoogle();
+  else document.querySelector('script[src*="gsi"]').addEventListener('load', initGoogle);
+});
+</script>
+</body>
+</html>
