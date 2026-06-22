@@ -593,6 +593,13 @@ async function savePaleo(){
         await sheetWrite(SHEETS[idx].id,`I${extraRow}:K${extraRow}`,[[nom,pre,mail]]);
       }
     }
+    // Auto-passer à "a répondu" si pas déjà plus avancé
+    const curRow=sheetData[idx][row-1]||[];
+    const curStatut=(curRow[4]||'').toLowerCase();
+    const isAdvanced=curStatut.includes('expédié')||curStatut.includes('expedie')||curStatut.includes('billet')||curStatut.includes('répondu')||curStatut.includes('repondu');
+    if(!isAdvanced){
+      await sheetWrite(SHEETS[idx].id,`E${row}`,[['a répondu']]);
+    }
     closeModal('modal-paleo');showToast('Données Paléo Tickets enregistrées');
     await loadSheet(idx);
   }catch(e){showToast('Erreur : '+e.message);}
