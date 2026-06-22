@@ -36,6 +36,14 @@ header{background:var(--surface);border-bottom:0.5px solid var(--border);padding
 .user-avatar{width:20px;height:20px;border-radius:50%;background:var(--text);color:var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600}
 .btn-logout{font-size:11px;color:var(--text-muted);background:transparent;border:none;cursor:pointer;padding:3px 6px}
 .btn-logout:hover{color:var(--text)}
+.btn-admin{font-size:11px;color:var(--text-muted);background:transparent;border:0.5px solid var(--border);border-radius:var(--r);cursor:pointer;padding:3px 8px;display:none;align-items:center;gap:4px}
+.btn-admin:hover{background:var(--bg);color:var(--text)}
+.btn-admin svg{width:12px;height:12px}
+.log-list{list-style:none;margin:0;padding:0;max-height:400px;overflow-y:auto}
+.log-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:12px}
+.log-item:last-child{border-bottom:none}
+.log-email{color:var(--text);font-weight:500}
+.log-date{color:var(--text-muted);font-size:11px;white-space:nowrap;margin-left:12px}
 .refresh-btn{background:transparent;border:0.5px solid var(--border-strong);border-radius:var(--r);padding:4px 10px;font-size:11px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:4px}
 .refresh-btn:hover{background:var(--bg);color:var(--text)}
 .refresh-btn svg{width:12px;height:12px}
@@ -179,6 +187,10 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
         <div class="user-avatar" id="user-avatar">?</div>
         <span id="user-name">—</span>
       </div>
+      <button class="btn-admin" id="btn-admin" onclick="openAdmin()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Admin
+      </button>
       <button class="btn-logout" onclick="signOut()">Déconnexion</button>
     </div>
   </header>
@@ -250,6 +262,17 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
   </div>
 </div>
 
+<!-- Modal Admin -->
+<div class="modal-bg" id="modal-admin">
+  <div class="modal">
+    <div class="modal-header">
+      <div><div class="modal-title">Administration</div><div class="modal-sub">50 dernières connexions</div></div>
+      <button class="modal-close" onclick="closeModal('modal-admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <ul class="log-list" id="admin-log-list"></ul>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -277,6 +300,7 @@ function initGoogle(){
       const p=JSON.parse(saved);
       document.getElementById('user-avatar').textContent=((p.given_name?.[0]||'')+(p.family_name?.[0]||'')).toUpperCase();
       document.getElementById('user-name').textContent=p.given_name||p.email;
+      logConnection(p.email);
       requestAccessToken(true);
       return;
     }catch(e){localStorage.removeItem('paleo_user');}
@@ -289,7 +313,8 @@ function handleCredential(response){
   const ini=(p.given_name?.[0]||'')+(p.family_name?.[0]||'');
   document.getElementById('user-avatar').textContent=ini.toUpperCase();
   document.getElementById('user-name').textContent=p.given_name||p.email;
-  localStorage.setItem('paleo_user',JSON.stringify({email:p.email,given_name:p.given_name,family_name:p.family_name}));
+  localStorage.setItem('paleo_user',JSON.stringify({email:p.email.toLowerCase(),given_name:p.given_name,family_name:p.family_name}));
+  logConnection(p.email);
   requestAccessToken(false);
 }
 function requestAccessToken(silent){
@@ -302,6 +327,8 @@ function requestAccessToken(silent){
         accessToken=tr.access_token;
         document.getElementById('login-screen').style.display='none';
         document.getElementById('app').style.display='block';
+        const savedU=localStorage.getItem('paleo_user');
+        try{const pu=JSON.parse(savedU||'{}');if((pu.email||'').toLowerCase()==='alex@mediaonegroup.ch'){document.getElementById('btn-admin').style.display='flex';}}catch(e){}
         loadAllSheets();
       } else if(silent){
         // Échec silencieux → afficher le bouton de connexion normalement
@@ -316,6 +343,7 @@ function signOut(){
   google.accounts.id.disableAutoSelect();
   localStorage.removeItem('paleo_user');
   accessToken=null;
+  const ab=document.getElementById('btn-admin');if(ab)ab.style.display='none';
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   google.accounts.id.renderButton(document.getElementById('g_signin_btn'),{theme:'outline',size:'large',text:'signin_with',locale:'fr',width:260});
@@ -893,6 +921,28 @@ function closeModal(id){document.getElementById(id).classList.remove('open');cur
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function copyEmail(btn,email){if(!email)return;navigator.clipboard.writeText(email).then(()=>{btn.classList.add('copied');showToast('Email copié : '+email);setTimeout(()=>btn.classList.remove('copied'),2000);});}
+
+/* ADMIN */
+function logConnection(email){
+  const logs=JSON.parse(localStorage.getItem('paleo_logs')||'[]');
+  logs.unshift({email,date:new Date().toISOString()});
+  if(logs.length>50) logs.length=50;
+  localStorage.setItem('paleo_logs',JSON.stringify(logs));
+}
+function openAdmin(){
+  const logs=JSON.parse(localStorage.getItem('paleo_logs')||'[]');
+  const list=document.getElementById('admin-log-list');
+  if(logs.length===0){
+    list.innerHTML='<li style="padding:1rem 0;text-align:center;color:var(--text-faint);font-size:12px">Aucune connexion enregistrée</li>';
+  } else {
+    list.innerHTML=logs.map(l=>{
+      const d=new Date(l.date);
+      const fmt=d.toLocaleDateString('fr-CH',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+d.toLocaleTimeString('fr-CH',{hour:'2-digit',minute:'2-digit'});
+      return `<li class="log-item"><span class="log-email">${esc(l.email)}</span><span class="log-date">${fmt}</span></li>`;
+    }).join('');
+  }
+  document.getElementById('modal-admin').classList.add('open');
+}
 
 window.addEventListener('load',()=>{
   if(typeof google!=='undefined'&&google.accounts) initGoogle();
