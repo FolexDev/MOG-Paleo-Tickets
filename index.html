@@ -72,10 +72,10 @@ tr.empty-row td{background:#fafaf8}
 .ant-MOC{background:var(--moc-bg);color:var(--moc);border:0.5px solid var(--moc-bd)}
 
 .status-select{font-size:11px;padding:2px 6px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;appearance:none;-webkit-appearance:none;min-width:120px;font-family:inherit}
-.s-attente{background:#f7f6f3;color:#6b6860;border-color:var(--border-strong)}
-.s-contact{background:#fdf5e8;color:#854f0b;border-color:var(--lfm-bd)}
-.s-repondu{background:#eef4fc;color:#185fa5;border-color:var(--lac-bd)}
-.s-billets{background:#eef7f2;color:#1a6b3f;border-color:var(--moc-bd)}
+.s-attente{background:#fff4e0;color:#b35f00;border-color:#f0c070}
+.s-contact{background:#f3eeff;color:#5b33b0;border-color:#c4a8f5}
+.s-repondu{background:#fff0f0;color:#b02020;border-color:#f5a8a8}
+.s-billets{background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8}
 
 .inline-field{display:flex;align-items:center;gap:3px;min-width:0}
 .editable-val{font-size:12px;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -116,6 +116,18 @@ tr:hover .btn-edit-inline{opacity:1}
 .btn-save:hover{opacity:.85}
 .btn-save:disabled{opacity:.5;cursor:not-allowed}
 
+.search-bar{background:var(--surface);border-bottom:0.5px solid var(--border);padding:7px 1.25rem;display:flex;align-items:center;gap:10px}
+.search-input{flex:1;max-width:360px;font-size:12px;padding:5px 10px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--bg);color:var(--text);font-family:inherit;outline:none}
+.search-input:focus{border-color:#0057a8;box-shadow:0 0 0 2px rgba(0,87,168,.12)}
+.search-nav{display:none;align-items:center;gap:6px;font-size:11px;color:var(--text-muted)}
+.search-nav.visible{display:flex}
+.search-count{font-weight:600;color:var(--text)}
+.btn-nav{width:22px;height:22px;border-radius:5px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.btn-nav:hover{background:var(--bg);color:var(--text)}
+.btn-nav svg{width:12px;height:12px}
+.send-badge{display:inline-flex;align-items:center;gap:5px;background:#fff4e0;color:#b35f00;border:0.5px solid #f0c070;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;cursor:default}
+.send-badge svg{width:13px;height:13px}
+tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
 #toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--text);color:var(--surface);padding:8px 14px;border-radius:var(--r);font-size:12px;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999}
 #toast.show{opacity:1}
 .loading{text-align:center;padding:3rem;color:var(--text-faint);font-size:12px}
@@ -164,6 +176,24 @@ tr:hover .btn-edit-inline{opacity:1}
     <button class="tab-btn" onclick="switchTab(2)">
       <span class="tab-dot" style="background:#cc2244"></span>LFM &amp; Rouge
     </button>
+  </div>
+
+  <div style="background:var(--surface);border-bottom:0.5px solid var(--border);padding:5px 1.25rem;display:flex;gap:16px;align-items:center">
+    <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-faint)">Sheets</span>
+    <a href="https://docs.google.com/spreadsheets/d/15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c/edit" target="_blank" style="font-size:11px;color:#0057a8;text-decoration:none;display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>ONE &amp; LAC</a>
+    <a href="https://docs.google.com/spreadsheets/d/116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8/edit" target="_blank" style="font-size:11px;color:#2d7a4f;text-decoration:none;display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>MOC</a>
+    <a href="https://docs.google.com/spreadsheets/d/1J8833aM0abL9iTD0-GGMGlnkPc5vkqHRDXpvkWR8jrk/edit" target="_blank" style="font-size:11px;color:#cc2244;text-decoration:none;display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>LFM &amp; ROUGE</a>
+  </div>
+
+  <div class="search-bar">
+    <input class="search-input" id="search-input" type="text" placeholder="Rechercher nom, prénom, email..." oninput="onSearch()" />
+    <div class="search-nav" id="search-nav">
+      <span id="search-count" class="search-count"></span>
+      <button class="btn-nav" onclick="navSearch(-1)" title="Précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="btn-nav" onclick="navSearch(1)" title="Suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="btn-nav" onclick="clearSearch()" title="Effacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="send-badge-wrap"></div>
   </div>
 
   <main>
@@ -324,9 +354,10 @@ function renderPanel(idx){
 
   let html=`<div class="stats-bar">
     <div class="stat-pill"><strong>${total}</strong> gagnants</div>
-    <div class="stat-pill"><strong>${contact}</strong> contactés</div>
-    <div class="stat-pill"><strong>${repondu}</strong> réponses</div>
-    <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f"><strong>${billets}</strong> billets expédiés</div>
+    <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${total-contact-repondu-billets}</strong> en attente</div>
+    <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
+    <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
+    <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
@@ -384,7 +415,8 @@ function renderPanel(idx){
     </button>`:''}</td>`;
 
     const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant);
-    html+=`<tr${rowCls}>${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
+    const drAttr=ant?` data-row="${mIdx}"`:'';
+    html+=`<tr${rowCls}${drAttr}>${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
 
     if(g.extra){
       const bNo2=g.extra[2]||'';
@@ -395,6 +427,7 @@ function renderPanel(idx){
 
   html+='</tbody></table></div></div>';
   panel.innerHTML=html;
+  updateSendBadge();
 }
 
 function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant){
@@ -503,7 +536,7 @@ function buildMailHTML(ak,dateRaw){
 
 function copyMail(btn,ak,dateRaw){
   const html=buildMailHTML(ak,dateRaw);
-  const plain=html.replace(/<a href="([^"]+)">([^<]+)<\/a>/g,'$2 ($1)').replace(/<br>/g,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  const plain=html.replace(/<a href="([^"]+)">([^<]+)<\/a>/g,'$2 ($1)').replace(/<br>/g,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').trim();
   try{
     navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([plain],{type:'text/plain'})})]).then(()=>{
       btn.classList.add('copied');
@@ -514,6 +547,83 @@ function copyMail(btn,ak,dateRaw){
 }
 
 /* UI */
+/* SEND BADGE */
+function updateSendBadge(){
+  let count=0;
+  for(let i=0;i<3;i++){
+    const rows=(sheetData[i]||[]).slice(1);
+    rows.forEach(r=>{
+      if(!(r[0]||'').trim()) return;
+      const st=(r[4]||'').toLowerCase();
+      if(st.includes('répondu')||st.includes('repondu')) count++;
+    });
+  }
+  const wrap=document.getElementById('send-badge-wrap');
+  if(!wrap) return;
+  if(count>0){
+    wrap.innerHTML=`<div class="send-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>${count} envoi${count>1?'s':''} possible${count>1?'s':''}</div>`;
+  } else {
+    wrap.innerHTML='';
+  }
+}
+
+/* SEARCH */
+let searchResults=[];
+let searchIdx=0;
+
+function onSearch(){
+  const q=document.getElementById('search-input').value.trim().toLowerCase();
+  document.querySelectorAll('tr.search-highlight').forEach(r=>r.classList.remove('search-highlight'));
+  searchResults=[];searchIdx=0;
+  const nav=document.getElementById('search-nav');
+  if(!q){nav.classList.remove('visible');return;}
+  // scan all panels
+  for(let panelIdx=0;panelIdx<3;panelIdx++){
+    const rows=(sheetData[panelIdx]||[]).slice(1);
+    rows.forEach((r,ri)=>{
+      const nom=(r[5]||'').toLowerCase();
+      const email=(r[7]||'').toLowerCase();
+      const paleoNom=(r[8]||'').toLowerCase();
+      const paleoPre=(r[9]||'').toLowerCase();
+      const paleoMail=(r[10]||'').toLowerCase();
+      if(nom.includes(q)||email.includes(q)||paleoNom.includes(q)||paleoPre.includes(q)||paleoMail.includes(q)){
+        searchResults.push({panelIdx, rowIdx: ri+2}); // +2 : header row + 1-based
+      }
+    });
+  }
+  nav.classList.toggle('visible', searchResults.length>0);
+  if(searchResults.length>0){searchIdx=0;jumpToResult();}
+  else{document.getElementById('search-count').textContent='0 résultat';}
+}
+
+function navSearch(dir){
+  if(!searchResults.length) return;
+  searchIdx=(searchIdx+dir+searchResults.length)%searchResults.length;
+  jumpToResult();
+}
+
+function jumpToResult(){
+  document.querySelectorAll('tr.search-highlight').forEach(r=>r.classList.remove('search-highlight'));
+  const res=searchResults[searchIdx];
+  if(!res) return;
+  // switch tab
+  switchTab(res.panelIdx);
+  // find row by data attribute — we tag rows with data-row
+  const row=document.querySelector(`#panel-${res.panelIdx} tr[data-row="${res.rowIdx}"]`);
+  if(row){
+    row.classList.add('search-highlight');
+    row.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  document.getElementById('search-count').textContent=`${searchIdx+1} / ${searchResults.length}`;
+}
+
+function clearSearch(){
+  document.getElementById('search-input').value='';
+  document.querySelectorAll('tr.search-highlight').forEach(r=>r.classList.remove('search-highlight'));
+  searchResults=[];
+  document.getElementById('search-nav').classList.remove('visible');
+}
+
 function switchTab(idx){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
