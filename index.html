@@ -270,6 +270,17 @@ let accessToken=null,sheetData=[[],[],[]],currentEditWinner=null,currentEditPale
 /* AUTH */
 function initGoogle(){
   google.accounts.id.initialize({client_id:CLIENT_ID,callback:handleCredential,auto_select:false});
+  // Tenter reconnexion silencieuse si user connu
+  const saved=localStorage.getItem('paleo_user');
+  if(saved){
+    try{
+      const p=JSON.parse(saved);
+      document.getElementById('user-avatar').textContent=((p.given_name?.[0]||'')+(p.family_name?.[0]||'')).toUpperCase();
+      document.getElementById('user-name').textContent=p.given_name||p.email;
+      requestAccessToken(true);
+      return;
+    }catch(e){localStorage.removeItem('paleo_user');}
+  }
   google.accounts.id.renderButton(document.getElementById('g_signin_btn'),{theme:'outline',size:'large',text:'signin_with',locale:'fr',width:260});
 }
 function handleCredential(response){
@@ -278,23 +289,37 @@ function handleCredential(response){
   const ini=(p.given_name?.[0]||'')+(p.family_name?.[0]||'');
   document.getElementById('user-avatar').textContent=ini.toUpperCase();
   document.getElementById('user-name').textContent=p.given_name||p.email;
-  requestAccessToken();
+  localStorage.setItem('paleo_user',JSON.stringify({email:p.email,given_name:p.given_name,family_name:p.family_name}));
+  requestAccessToken(false);
 }
-function requestAccessToken(){
-  google.accounts.oauth2.initTokenClient({
+function requestAccessToken(silent){
+  const client=google.accounts.oauth2.initTokenClient({
     client_id:CLIENT_ID,
     scope:'https://www.googleapis.com/auth/spreadsheets',
+    prompt:silent?'':'select_account',
     callback:(tr)=>{
       if(tr.access_token){
         accessToken=tr.access_token;
         document.getElementById('login-screen').style.display='none';
         document.getElementById('app').style.display='block';
         loadAllSheets();
+      } else if(silent){
+        // Échec silencieux → afficher le bouton de connexion normalement
+        localStorage.removeItem('paleo_user');
+        google.accounts.id.renderButton(document.getElementById('g_signin_btn'),{theme:'outline',size:'large',text:'signin_with',locale:'fr',width:260});
       }
     }
-  }).requestAccessToken();
+  });
+  client.requestAccessToken();
 }
-function signOut(){google.accounts.id.disableAutoSelect();accessToken=null;document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';}
+function signOut(){
+  google.accounts.id.disableAutoSelect();
+  localStorage.removeItem('paleo_user');
+  accessToken=null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  google.accounts.id.renderButton(document.getElementById('g_signin_btn'),{theme:'outline',size:'large',text:'signin_with',locale:'fr',width:260});
+}
 
 /* DATA */
 async function loadSheet(idx){
