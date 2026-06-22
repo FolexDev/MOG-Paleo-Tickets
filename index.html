@@ -76,6 +76,7 @@ tr.empty-row td{background:#fafaf8}
 .s-contact{background:#f3eeff;color:#5b33b0;border-color:#c4a8f5}
 .s-repondu{background:#fff0f0;color:#b02020;border-color:#f5a8a8}
 .s-billets{background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8}
+.s-locked{background:#f7f6f3;color:#c0bdb8;border-color:#e0ddd8;cursor:not-allowed;pointer-events:none}
 
 .inline-field{display:flex;align-items:center;gap:3px;min-width:0}
 .editable-val{font-size:12px;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -437,7 +438,9 @@ function renderPanel(idx){
     </td>`;
     const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
     const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)">${esc(email)}</td>`;
-    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${sc}" onchange="updateStatus(this,${idx},${mIdx})">
+        const hasInfo=!!(nom||tel||email);
+    const isLocked=!hasInfo&&(!statut||statut==='en attente');
+    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${isLocked?'s-locked':sc}" ${isLocked?'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"':''} onchange="updateStatus(this,${idx},${mIdx})">
       <option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option>
       <option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option>
       <option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option>
@@ -796,7 +799,7 @@ function renderAllPanel(){
     const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:140px"><div class="inline-field"><div class="editable-val ${nom?'':'empty'}">${esc(nom)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
     const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
     const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)">${esc(email)}</td>`;
-    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${sc}" onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
+    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${(!!(nom||tel||email))||statut!=='en attente'?sc:'s-locked'}" ${(!!(nom||tel||email))||statut!=='en attente'?'':'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"'} onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
     const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
     if(date && date!==lastDateAll && lastDateAll!==''){
