@@ -486,8 +486,15 @@ function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,
 async function updateStatus(select,sheetIdx,rowNum){
   const val=select.value;
   select.className='status-select '+sClass(val);
+  // Update in-memory data immediately so re-renders stay consistent
+  const rowIdx=rowNum-1; // sheetData includes header at index 0
+  if(sheetData[sheetIdx][rowIdx]) sheetData[sheetIdx][rowIdx][4]=val;
   try{await sheetWrite(SHEETS[sheetIdx].id,`E${rowNum}`,[[val]]);showToast('Statut mis à jour');}
-  catch(e){showToast('Erreur : '+e.message);}
+  catch(e){
+    // Revert memory on failure
+    if(sheetData[sheetIdx][rowIdx]) sheetData[sheetIdx][rowIdx][4]='';
+    showToast('Erreur : '+e.message);
+  }
 }
 
 /* WINNER MODAL */
