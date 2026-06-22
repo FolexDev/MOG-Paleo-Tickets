@@ -84,6 +84,7 @@ tr.empty-row td{background:#fafaf8}
 .btn-edit-inline{width:18px;height:18px;border-radius:5px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);flex-shrink:0;opacity:0}
 tr:hover .btn-edit-inline{opacity:1}
 .btn-edit-inline:hover{background:var(--bg);color:var(--text)}
+.btn-edit-inline.copied{background:#eef7f2;color:#1a6b3f;opacity:1}
 .btn-edit-inline svg{width:11px;height:11px}
 
 .paleo-inline{display:flex;align-items:center;gap:4px;min-width:0}
@@ -433,7 +434,8 @@ function renderPanel(idx){
       </div>
     </td>`;
     const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
-    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)">${esc(email)}</td>`;
+    const copyIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIcon}</button>`:''}</div></td>`;
         const hasInfo=!!(nom||tel||email);
     const isLocked=!hasInfo&&(!statut||statut==='en attente');
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${isLocked?'s-locked':sc}" ${isLocked?'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"':''} onchange="updateStatus(this,${idx},${mIdx})">
@@ -452,7 +454,8 @@ function renderPanel(idx){
 
     if(g.extra){
       const bNo2=g.extra[2]||'';
-      html+=`<tr><td style="text-align:center;color:var(--text-faint)">${esc(bNo2)}</td></tr>`;
+      const paleoCell2=buildPaleoCell(idx,g.extraIdx,bNo2,pNom2,pPre2,pMail2,ant);
+      html+=`<tr><td style="text-align:center;color:var(--text-faint)">${esc(bNo2)}</td>${paleoCell2}</tr>`;
     }
   });
 
@@ -463,29 +466,15 @@ function renderPanel(idx){
 }
 
 function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,pMail2){
-  const filled1=!!(pNom||pPre||pMail);
-  const txt1=filled1?`${pNom} ${pPre} — ${pMail}`:'non renseigné';
-  const extraArg=extraRow?`,${extraRow},'${jsEsc(pNom2||'')}','${jsEsc(pPre2||'')}','${jsEsc(pMail2||'')}'`:`,null,'','',''`;
+  const filled=pNom||pPre||pMail;
+  const txt=filled?`${pNom} ${pPre} — ${pMail}`:'non renseigné';
+  const extraArg=extraRow?`,${extraRow},'${jsEsc(pNom2||'')}','${jsEsc(pPre2||'')}','${jsEsc(pMail2||'')}'`:",null,'','',''";
   const editBtn=ant?`<button class="btn-edit-paleo" onclick="openPaleoModal(${idx},${rowNum},'${jsEsc(bNo)}','${jsEsc(pNom)}','${jsEsc(pPre)}','${jsEsc(pMail)}'${extraArg})" title="Modifier données Paléo">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
   </button>`:'';
-  if(extraRow){
-    const filled2=!!(pNom2||pPre2||pMail2);
-    const txt2=filled2?`${pNom2} ${pPre2} — ${pMail2}`:'non renseigné';
-    return `<td rowspan="2" style="max-width:220px;vertical-align:middle">
-      <div style="display:flex;align-items:center;gap:5px">
-        <div style="flex:1;display:flex;flex-direction:column;gap:3px">
-          <div class="paleo-text ${filled1?'':'empty'}" style="font-size:11px">${esc(txt1)}</div>
-          <div style="height:0.5px;background:var(--border)"></div>
-          <div class="paleo-text ${filled2?'':'empty'}" style="font-size:11px">${esc(txt2)}</div>
-        </div>
-        ${editBtn}
-      </div>
-    </td>`;
-  }
-  return `<td style="max-width:220px">
+  return `<td style="max-width:200px">
     <div class="paleo-inline">
-      <div class="paleo-text ${filled1?'':'empty'}">${esc(txt1)}</div>
+      <div class="paleo-text ${filled?'':'empty'}">${esc(txt)}</div>
       ${editBtn}
     </div>
   </td>`;
@@ -826,7 +815,8 @@ function renderAllPanel(){
     const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:120px"><div class="inline-field"><div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
     const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:140px"><div class="inline-field"><div class="editable-val ${nom?'':'empty'}">${esc(nom)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
     const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
-    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)">${esc(email)}</td>`;
+    const copyIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIconAll}</button>`:''}</div></td>`;
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${(!!(nom||tel||email))||statut!=='en attente'?sc:'s-locked'}" ${(!!(nom||tel||email))||statut!=='en attente'?'':'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"'} onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
     const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
@@ -837,7 +827,8 @@ function renderAllPanel(){
     html+=`<tr data-row="${mIdx}">${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
     if(g.extra){
       const bNo2=g.extra[2]||'';
-      html+=`<tr><td style="text-align:center;color:var(--text-faint)">${esc(bNo2)}</td></tr>`;
+      const paleoCell2=buildPaleoCell(idx,g.extraIdx,bNo2,pNom2,pPre2,pMail2,ant);
+      html+=`<tr><td style="text-align:center;color:var(--text-faint)">${esc(bNo2)}</td>${paleoCell2}</tr>`;
     }
   });
 
@@ -855,6 +846,7 @@ function switchTab(idx){
 function closeModal(id){document.getElementById(id).classList.remove('open');currentEditWinner=null;currentEditPaleo=null;}
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function copyEmail(btn,email){if(!email)return;navigator.clipboard.writeText(email).then(()=>{btn.classList.add('copied');showToast('Email copié : '+email);setTimeout(()=>btn.classList.remove('copied'),2000);});}
 
 window.addEventListener('load',()=>{
   if(typeof google!=='undefined'&&google.accounts) initGoogle();
