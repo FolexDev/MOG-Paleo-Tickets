@@ -163,8 +163,8 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
     </div>
     <div class="header-right">
       <div style="display:flex;gap:6px;align-items:center;border-right:0.5px solid var(--border);padding-right:10px;margin-right:2px">
-        <a href="https://docs.google.com/spreadsheets/d/15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c/edit" target="_blank" style="font-size:11px;color:#0057a8;text-decoration:none;display:flex;align-items:center;gap:2px;padding:3px 7px;border:0.5px solid #b3cef0;border-radius:20px;background:#eef4fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>ONE-LAC</a>
-        <a href="https://docs.google.com/spreadsheets/d/116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8/edit" target="_blank" style="font-size:11px;color:#2d7a4f;text-decoration:none;display:flex;align-items:center;gap:2px;padding:3px 7px;border:0.5px solid #9fd4b8;border-radius:20px;background:#eef7f2"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>MOC</a>
+        <a href="https://docs.google.com/spreadsheets/d/15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c/edit" target="_blank" style="font-size:11px;color:#5b33b0;text-decoration:none;display:flex;align-items:center;gap:2px;padding:3px 7px;border:0.5px solid #c4a8f5;border-radius:20px;background:#f3eeff"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>ONE-LAC</a>
+        <a href="https://docs.google.com/spreadsheets/d/116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8/edit" target="_blank" style="font-size:11px;color:#1a1a18;text-decoration:none;display:flex;align-items:center;gap:2px;padding:3px 7px;border:0.5px solid #ccc9c0;border-radius:20px;background:#f0f0ee"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>MOC</a>
         <a href="https://docs.google.com/spreadsheets/d/1J8833aM0abL9iTD0-GGMGlnkPc5vkqHRDXpvkWR8jrk/edit" target="_blank" style="font-size:11px;color:#cc2244;text-decoration:none;display:flex;align-items:center;gap:2px;padding:3px 7px;border:0.5px solid #f0b3c0;border-radius:20px;background:#fceef1"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>LFM-ROUGE</a>
       </div>
       <button class="refresh-btn" onclick="refreshAll()">
@@ -261,7 +261,7 @@ const SHEETS=[
 // Mapping abrév → jour complet pour les dates du Paléo 2026
 const DAY_MAP={'mar':'Mardi','mer':'Mercredi','jeu':'Jeudi','ven':'Vendredi','sam':'Samedi','dim':'Dimanche','lun':'Lundi'};
 
-let accessToken=null,sheetData=[[],[],[]],currentEditWinner=null,currentEditPaleo=null,activeFilter='';
+let accessToken=null,sheetData=[[],[],[]],currentEditWinner=null,currentEditPaleo=null,activeFilter='',splitPrefs={};
 
 /* AUTH */
 function initGoogle(){
@@ -394,6 +394,7 @@ function renderPanel(idx){
     return true;
   }) : groups;
 
+  let lastDate='';
   filteredGroups.forEach(g=>{
     const r=g.main;
     const ant=(r[0]||'').trim();
@@ -413,6 +414,10 @@ function renderPanel(idx){
     const mIdx=g.mainIdx;
     const sc=sClass(statut);
     const rowCls=isEmpty?' class="empty-row"':'';
+    if(ant && date && date!==lastDate && lastDate!==''){
+      html+=`<tr><td colspan="10" style="padding:3px 0;background:var(--bg);border-bottom:0.5px solid var(--border)"></td></tr>`;
+    }
+    if(ant && date) lastDate=date;
 
     const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
 
@@ -538,11 +543,23 @@ function openPaleoModal(idx,row,bNo,pNom,pPre,pMail,extraRow,pNom2,pPre2,pMail2)
     </div>` : ''}
   `;
   document.getElementById('modal-paleo').classList.add('open');
-  setTimeout(()=>document.getElementById('mp-nom').focus(),50);
+  setTimeout(()=>{
+    document.getElementById('mp-nom').focus();
+    const splitEl=document.getElementById('mp-split');
+    if(splitEl){
+      const key=`${idx}-${row}`;
+      const wasSplit=splitPrefs[key]||false;
+      splitEl.checked=wasSplit;
+      document.getElementById('mp-extra-fields').style.display=wasSplit?'block':'none';
+    }
+  },50);
 }
 function toggleSplit(){
   const checked=document.getElementById('mp-split').checked;
   document.getElementById('mp-extra-fields').style.display=checked?'block':'none';
+  if(currentEditPaleo){
+    splitPrefs[`${currentEditPaleo.idx}-${currentEditPaleo.row}`]=checked;
+  }
 }
 
 async function savePaleo(){
@@ -753,6 +770,7 @@ function renderAllPanel(){
     <th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
 
+  let lastDateAll='';
   allGroups.forEach(g=>{
     const idx=g.sheetIdx;
     const r=g.main;
