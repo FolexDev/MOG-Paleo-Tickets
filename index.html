@@ -262,7 +262,7 @@ const SHEETS=[
 // Mapping abrév → jour complet pour les dates du Paléo 2026
 const DAY_MAP={'mar':'Mardi','mer':'Mercredi','jeu':'Jeudi','ven':'Vendredi','sam':'Samedi','dim':'Dimanche','lun':'Lundi'};
 
-let accessToken=null,sheetData=[[],[],[]],currentEditWinner=null,currentEditPaleo=null,activeFilter='',splitPrefs={};
+let accessToken=null,sheetData=[[],[],[]],currentEditWinner=null,currentEditPaleo=null,activeFilters=new Set(),splitPrefs={};
 
 /* AUTH */
 function initGoogle(){
@@ -372,11 +372,11 @@ function renderPanel(idx){
   </div>
   <div class="filter-bar">
     <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Filtrer :</span>
-    <button class="filter-btn ${activeFilter===''?'active':''}" onclick="setFilter('',${idx})">Tous</button>
-    <button class="filter-btn f-attente ${activeFilter==='attente'?'active':''}" onclick="setFilter('attente',${idx})">En attente</button>
-    <button class="filter-btn f-contact ${activeFilter==='contact'?'active':''}" onclick="setFilter('contact',${idx})">Contact fait</button>
-    <button class="filter-btn f-repondu ${activeFilter==='repondu'?'active':''}" onclick="setFilter('repondu',${idx})">A répondu</button>
-    <button class="filter-btn f-billets ${activeFilter==='billets'?'active':''}" onclick="setFilter('billets',${idx})">Billets expédiés</button>
+    <button class="filter-btn ${activeFilters.size===0?'active':''}" onclick="setFilter('',${idx})">Tous</button>
+    <button class="filter-btn f-attente ${activeFilters.has('attente')?'active':''}" onclick="setFilter('attente',${idx})">En attente</button>
+    <button class="filter-btn f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',${idx})">Contact fait</button>
+    <button class="filter-btn f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',${idx})">A répondu</button>
+    <button class="filter-btn f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',${idx})">Billets expédiés</button>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
@@ -385,14 +385,10 @@ function renderPanel(idx){
     <th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
 
-  const filteredGroups = activeFilter ? groups.filter(g=>{
+  const filteredGroups = activeFilters.size>0 ? groups.filter(g=>{
     if(!(g.main[0]||'').trim()) return true; // keep empty rows
     const st=(g.main[4]||'').toLowerCase();
-    if(activeFilter==='attente') return !st||st==='en attente';
-    if(activeFilter==='contact') return st.includes('contact');
-    if(activeFilter==='repondu') return st.includes('répondu')||st.includes('repondu');
-    if(activeFilter==='billets') return st.includes('expédié')||st.includes('expedie')||st.includes('billet');
-    return true;
+    return matchesFilters(st);
   }) : groups;
 
   let lastDate='';
@@ -464,7 +460,7 @@ function renderPanel(idx){
   html+='</tbody></table></div></div>';
   panel.innerHTML=html;
   updateSendBadge();
-  if(activeFilter) document.getElementById('panel-'+s.panel).querySelectorAll('tr.empty-row').forEach(r=>r.style.display='none');
+  if(activeFilters.size>0) document.getElementById('panel-'+s.panel).querySelectorAll('tr.empty-row').forEach(r=>r.style.display='none');
 }
 
 function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,pMail2){
@@ -714,8 +710,24 @@ function clearSearch(){
   document.getElementById('search-nav').classList.remove('visible');
 }
 
+function matchesFilters(st){
+  if(activeFilters.size===0) return true;
+  for(const f of activeFilters){
+    if(f==='attente' && (!st||st==='en attente')) return true;
+    if(f==='contact' && st.includes('contact')) return true;
+    if(f==='repondu' && (st.includes('répondu')||st.includes('repondu'))) return true;
+    if(f==='billets' && (st.includes('expédié')||st.includes('expedie')||st.includes('billet'))) return true;
+  }
+  return false;
+}
+
 function setFilter(f,idx){
-  activeFilter=f;
+  if(f===''){
+    activeFilters.clear();
+  } else {
+    if(activeFilters.has(f)) activeFilters.delete(f);
+    else activeFilters.add(f);
+  }
   if(idx===3) renderAllPanel();
   else renderPanel(idx);
 }
@@ -741,14 +753,10 @@ function renderAllPanel(){
   });
 
   // Filter
-  if(activeFilter){
+  if(activeFilters.size>0){
     allGroups=allGroups.filter(g=>{
       const st=(g.main[4]||'').toLowerCase();
-      if(activeFilter==='attente') return !st||st==='en attente';
-      if(activeFilter==='contact') return st.includes('contact');
-      if(activeFilter==='repondu') return st.includes('répondu')||st.includes('repondu');
-      if(activeFilter==='billets') return st.includes('expédié')||st.includes('expedie')||st.includes('billet');
-      return true;
+      return matchesFilters(st);
     });
   }
 
@@ -767,11 +775,11 @@ function renderAllPanel(){
   </div>
   <div class="filter-bar">
     <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Filtrer :</span>
-    <button class="filter-btn ${activeFilter===''?'active':''}" onclick="setFilter('',3)">Tous</button>
-    <button class="filter-btn f-attente ${activeFilter==='attente'?'active':''}" onclick="setFilter('attente',3)">En attente</button>
-    <button class="filter-btn f-contact ${activeFilter==='contact'?'active':''}" onclick="setFilter('contact',3)">Contact fait</button>
-    <button class="filter-btn f-repondu ${activeFilter==='repondu'?'active':''}" onclick="setFilter('repondu',3)">A répondu</button>
-    <button class="filter-btn f-billets ${activeFilter==='billets'?'active':''}" onclick="setFilter('billets',3)">Billets expédiés</button>
+    <button class="filter-btn ${activeFilters.size===0?'active':''}" onclick="setFilter('',3)">Tous</button>
+    <button class="filter-btn f-attente ${activeFilters.has('attente')?'active':''}" onclick="setFilter('attente',3)">En attente</button>
+    <button class="filter-btn f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',3)">Contact fait</button>
+    <button class="filter-btn f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',3)">A répondu</button>
+    <button class="filter-btn f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',3)">Billets expédiés</button>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
@@ -830,6 +838,7 @@ function switchTab(idx){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
   if(idx===3) renderAllPanel();
+  else renderPanel(idx);
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');currentEditWinner=null;currentEditPaleo=null;}
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
