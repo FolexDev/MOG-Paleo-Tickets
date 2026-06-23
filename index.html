@@ -311,7 +311,7 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070}
       <button class="modal-close" onclick="closeModal('modal-winner')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body">
-      <div class="form-group"><label class="form-label">Nom et Prénom</label><input class="form-input" id="mw-nom" type="text" placeholder="Dupont Marie" /></div>
+      <div class="form-group"><label class="form-label">Prénom et Nom</label><input class="form-input" id="mw-nom" type="text" placeholder="Marie Dupont" /></div>
       <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="mw-tel" type="text" /></div>
       <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mw-email" type="email" /></div>
       <div class="form-group"><label class="form-label">Jeu / Origine</label><input class="form-input" id="mw-jeu" type="text" placeholder="ex: 30 ans pour 30 minutes" /></div>
@@ -614,7 +614,7 @@ function renderPanel(idx){
     }
 
     const antCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<span class="ant-badge ant-${ak}">${antLabel(ant)}</span>`:''}</td>`;
-    const bNoCell=`<td rowspan="${sp}" style="vertical-align:middle;text-align:center;color:var(--text-muted);font-weight:600;font-size:11px">${esc(bNo)}</td>`;
+    const bNoCell=`<td style="vertical-align:middle;text-align:center;color:var(--text-muted);font-weight:600;font-size:11px">${esc(bNo)}</td>`;
     const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:110px">
       <div class="inline-field">
         <div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div>
@@ -622,18 +622,17 @@ function renderPanel(idx){
       </div>
     </td>`;
 
-    // Winner cell: nom + tel + email groupés
+    // Winner cell: Prénom Nom / Email / Téléphone
     const canSend=isSendEnabled(idx)&&idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
     const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;min-width:180px">
       <div style="display:flex;align-items:flex-start;gap:4px">
         <div class="winner-info" style="flex:1;min-width:0">
           <div class="winner-name">${esc(nom)||'<span style="color:var(--text-faint);font-style:italic;font-weight:400">—</span>'}</div>
           <div class="winner-meta">
-            ${tel?`<span>${esc(tel)}</span>`:``}
-            ${tel&&email?`<span class="winner-meta-sep">·</span>`:''}
-            ${email?`<span style="display:inline-flex;align-items:center;gap:2px">${esc(email)}${`<button class="btn-edit-inline" style="opacity:1" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier">${copyIcon}</button>`}</span>`:''}
+            ${email?`<span>${esc(email)}${`<button class="btn-edit-inline" style="opacity:1;margin-left:1px" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier">${copyIcon}</button>`}</span>`:''}
           </div>
-          ${canSend?`<div style="margin-top:3px"><button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')">${sendIcon} Envoyer</button></div>`:''}
+          ${tel?`<div class="winner-meta" style="margin-top:1px">${esc(tel)}</div>`:''}
+          ${canSend?`<div style="margin-top:4px"><button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')">${sendIcon} Envoyer</button></div>`:''}
         </div>
         ${ant?`<button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button>`:''}
       </div>
@@ -655,8 +654,7 @@ function renderPanel(idx){
     html+=`<tr${drAttr}>${antCell}${bNoCell}${jeuCell}${winnerCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
     if(g.extra){
       const bNo2=g.extra[2]||'';
-      const paleoCell2=buildPaleoCell(idx,g.extraIdx,bNo2,pNom2,pPre2,pMail2,ant);
-      html+=`<tr><td style="text-align:center;color:var(--text-faint);font-size:11px">${esc(bNo2)}</td>${paleoCell2}</tr>`;
+      html+=`<tr><td style="text-align:center;color:var(--text-faint);font-size:11px;border-bottom:0.5px solid var(--border)">${esc(bNo2)}</td></tr>`;
     }
   });
 
@@ -1100,18 +1098,17 @@ function renderAllPanel(){
     const canSendAll=isSendEnabled(idx)&&idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
 
     const antCell=`<td rowspan="${sp}" style="vertical-align:middle"><span class="ant-badge ant-${ak}">${antLabel(ant)}</span></td>`;
-    const bNoCell=`<td rowspan="${sp}" style="vertical-align:middle;text-align:center;color:var(--text-muted);font-weight:600;font-size:11px">${esc(bNo)}</td>`;
+    const bNoCell=`<td style="vertical-align:middle;text-align:center;color:var(--text-muted);font-weight:600;font-size:11px">${esc(bNo)}</td>`;
     const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:110px"><div class="inline-field"><div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
     const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;min-width:180px">
       <div style="display:flex;align-items:flex-start;gap:4px">
         <div class="winner-info" style="flex:1;min-width:0">
           <div class="winner-name">${esc(nom)||'<span style="color:var(--text-faint);font-style:italic;font-weight:400">—</span>'}</div>
           <div class="winner-meta">
-            ${tel?`<span>${esc(tel)}</span>`:''}
-            ${tel&&email?`<span class="winner-meta-sep">·</span>`:''}
-            ${email?`<span style="display:inline-flex;align-items:center;gap:2px">${esc(email)}<button class="btn-edit-inline" style="opacity:1" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier">${copyIconAll}</button></span>`:''}
+            ${email?`<span>${esc(email)}<button class="btn-edit-inline" style="opacity:1;margin-left:1px" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier">${copyIconAll}</button></span>`:''}
           </div>
-          ${canSendAll?`<div style="margin-top:3px"><button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')">${sendIconAll} Envoyer</button></div>`:''}
+          ${tel?`<div class="winner-meta" style="margin-top:1px">${esc(tel)}</div>`:''}
+          ${canSendAll?`<div style="margin-top:4px"><button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')">${sendIconAll} Envoyer</button></div>`:''}
         </div>
         <button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button>
       </div>
@@ -1123,8 +1120,7 @@ function renderAllPanel(){
     html+=`<tr data-row="${mIdx}">${antCell}${bNoCell}${jeuCell}${winnerCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
     if(g.extra){
       const bNo2=g.extra[2]||'';
-      const paleoCell2=buildPaleoCell(idx,g.extraIdx,bNo2,pNom2,pPre2,pMail2,ant);
-      html+=`<tr><td style="text-align:center;color:var(--text-faint);font-size:11px">${esc(bNo2)}</td>${paleoCell2}</tr>`;
+      html+=`<tr><td style="text-align:center;color:var(--text-faint);font-size:11px;border-bottom:0.5px solid var(--border)">${esc(bNo2)}</td></tr>`;
     }
   });
 
