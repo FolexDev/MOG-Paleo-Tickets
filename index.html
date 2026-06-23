@@ -501,16 +501,30 @@ function renderPanel(idx){
   const groups=buildGroups(rows);
 
   let total=0,contact=0,repondu=0,billets=0,libres=0;
+  const antStockMap={};
   groups.forEach(g=>{
     const ant=(g.main[0]||'').trim();
     if(!ant) return;
+    const ak=antKey(ant);
+    if(!antStockMap[ak]) antStockMap[ak]={total:0,libre:0,label:antLabel(ant)};
+    antStockMap[ak].total++;
     const nom=(g.main[5]||'').trim();
-    if(!nom){libres++;return;}
+    if(!nom){libres++;antStockMap[ak].libre++;return;}
     total++;
     const st=(g.main[4]||'').toLowerCase();
     if(st.includes('contact'))contact++;
     if(st.includes('répondu')||st.includes('repondu'))repondu++;
     if(st.includes('expédié')||st.includes('expedie')||st.includes('billet'))billets++;
+  });
+
+  const filteredGroups=groups.filter(g=>{
+    const ant=(g.main[0]||'').trim();
+    if(!ant) return false;
+    const nom=(g.main[5]||'').trim();
+    const isSlotLibre=!nom;
+    const st=(g.main[4]||'').toLowerCase();
+    if(activeFilters.size===0) return true;
+    return matchesFilters(st,isSlotLibre);
   });
 
   let html=`<div class="stats-bar">
@@ -531,37 +545,20 @@ function renderPanel(idx){
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
-    <th>Ant.</th><th>#</th><th>Jeu</th><th>Gagnant</th><th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
-    <th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
+    <th>Ant.</th><th>Date</th><th>#</th><th>Jeu</th><th>Gagnant</th><th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
 
-  const filteredGroups = groups.filter(g=>{
-    const ant=(g.main[0]||'').trim();
-    const nom=(g.main[5]||'').trim();
-    const isSlot=!!(ant||/^\d+$/.test(ant))&&!nom; // has antenna, no name
-    const isSlotLibre=ant&&!nom;
-    const st=(g.main[4]||'').toLowerCase();
-    if(activeFilters.size===0) return true;
-    return matchesFilters(st, isSlotLibre);
-  });
-
-  // Stock par antenne
-  const antStockMap={}; // {ak: {total,libre}}
-  groups.forEach(g=>{
-    const ant=(g.main[0]||'').trim();
-    if(!ant) return;
-    const ak=antKey(ant);
-    if(!antStockMap[ak]) antStockMap[ak]={total:0,libre:0,label:antLabel(ant)};
-    antStockMap[ak].total++;
-    if(!(g.main[5]||'').trim()) antStockMap[ak].libre++;
-  });
+  const NCOLS=8;
+  const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+  const copyIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+  const sendIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
 
   let lastDate='';
   filteredGroups.forEach(g=>{
     const r=g.main;
     const ant=(r[0]||'').trim();
     const ak=antKey(ant);
-    const date=r[1]||'';
+    const date=(r[1]||'').trim();
     const bNo=r[2]||'';
     const jeu=r[3]||'';
     const statut=r[4]||'en attente';
@@ -572,24 +569,23 @@ function renderPanel(idx){
     const re=g.extra||[];
     const pNom2=re[8]||'',pPre2=re[9]||'',pMail2=re[10]||'';
     const isSlotLibre=ant&&!nom;
-    const isEmpty=!ant&&!nom;
     const sp=g.span;
     const mIdx=g.mainIdx;
     const sc=sClass(statut);
 
-    if(isEmpty) return; // skip truly empty rows
-
-    if(ant && date && date!==lastDate && lastDate!==''){
-      html+=`<tr><td colspan="10" style="padding:3px 0;background:var(--bg);border-bottom:0.5px solid var(--border)"></td></tr>`;
+    // Day separator
+    if(date && date!==lastDate){
+      html+=`<tr class="day-sep"><td colspan="${NCOLS}" style="padding:0"><div class="day-sep-label" style="padding:8px 10px">${fmtDate(date)}</div></td></tr>`;
+      lastDate=date;
     }
-    if(ant && date) lastDate=date;
 
     if(isSlotLibre){
+      const bNo2=g.extra?g.extra[2]||'':'';
       html+=`<tr class="slot-libre" data-row="${mIdx}">
         <td rowspan="${sp}" style="vertical-align:middle"><span class="ant-libre">${antLabel(ant)}</span></td>
-        <td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-faint);font-size:11px">${fmtDate(date)}</td>
-        <td style="text-align:center;color:var(--text-faint)">${esc(bNo)}</td>
-        <td colspan="6" style="vertical-align:middle" rowspan="${sp}">
+        <td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-faint)">${fmtDate(date)}</td>
+        <td style="text-align:center;color:var(--text-faint);font-size:11px;font-weight:600">${esc(bNo)}</td>
+        <td colspan="5" rowspan="${sp}" style="vertical-align:middle">
           <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Attribuer un gagnant
@@ -597,89 +593,61 @@ function renderPanel(idx){
         </td>
       </tr>`;
       if(g.extra){
-        html+=`<tr class="slot-libre"><td style="text-align:center;color:var(--text-faint)">${esc(g.extra[2]||'')}</td></tr>`;
+        html+=`<tr class="slot-libre"><td style="text-align:center;color:var(--text-faint);font-size:11px;font-weight:600">${esc(bNo2)}</td></tr>`;
       }
       return;
     }
 
-    const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    const copyIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-    const sendIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
-
-    // Day separator
-    if(ant && date && date!==lastDate){
-      if(lastDate!=='') html+=`<tr class="day-sep"><td colspan="7"><div class="day-sep-label">${fmtDate(date)}</div></td></tr>`;
-      else html+=`<tr class="day-sep"><td colspan="7"><div class="day-sep-label">${fmtDate(date)}</div></td></tr>`;
-      lastDate=date;
-    }
-
-    const antCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<span class="ant-badge ant-${ak}">${antLabel(ant)}</span>`:''}</td>`;
-    const bNoCell=`<td style="vertical-align:middle;text-align:center;color:var(--text-muted);font-weight:600;font-size:11px">${esc(bNo)}</td>`;
-    const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:110px">
-      <div class="inline-field">
-        <div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div>
-        ${ant?`<button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button>`:''}
-      </div>
-    </td>`;
-
-    // Winner cell: Prénom Nom / Email / Téléphone
+    // Normal attributed row
     const canSend=isSendEnabled(idx)&&idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
-    const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;min-width:180px">
+    const antCell=`<td rowspan="${sp}" style="vertical-align:middle"><span class="ant-badge ant-${ak}">${antLabel(ant)}</span></td>`;
+    const dateCell=`<td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-muted);font-size:11px">${fmtDate(date)}</td>`;
+    const bNoCell=`<td style="text-align:center;color:var(--text-muted);font-weight:600;font-size:11px">${esc(bNo)}</td>`;
+    const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:110px"><div class="inline-field"><div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
+    const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;min-width:160px">
       <div style="display:flex;align-items:flex-start;gap:4px">
         <div class="winner-info" style="flex:1;min-width:0">
-          <div class="winner-name">${esc(nom)||'<span style="color:var(--text-faint);font-style:italic;font-weight:400">—</span>'}</div>
-          <div class="winner-meta">
-            ${email?`<span>${esc(email)}${`<button class="btn-edit-inline" style="opacity:1;margin-left:1px" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier">${copyIcon}</button>`}</span>`:''}
+          <div class="winner-name">${esc(nom)}</div>
+          ${tel?`<div class="winner-meta">${esc(tel)}</div>`:''}
+          <div class="winner-meta" style="display:inline-flex;align-items:center;gap:2px">
+            ${email?`${esc(email)}<button class="btn-edit-inline" style="opacity:1" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier">${copyIcon}</button>`:''}
           </div>
-          ${tel?`<div class="winner-meta" style="margin-top:1px">${esc(tel)}</div>`:''}
           ${canSend?`<div style="margin-top:4px"><button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')">${sendIcon} Envoyer</button></div>`:''}
         </div>
-        ${ant?`<button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button>`:''}
+        <button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button>
       </div>
     </td>`;
-
     const hasInfo=!!(nom||tel||email);
     const isLocked=!hasInfo&&(!statut||statut==='en attente');
-    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${isLocked?'s-locked':sc}" ${isLocked?'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"':''} onchange="updateStatus(this,${idx},${mIdx})">
+    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${isLocked?'s-locked':sc}" ${isLocked?'disabled':''} onchange="updateStatus(this,${idx},${mIdx})">
       <option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option>
       <option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option>
       <option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option>
       <option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option>
-    </select>`:''}</td>`;
-    const mailCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail
-    </button>`:''}</td>`;
-    const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
-    const drAttr=ant?` data-row="${mIdx}"`:'';
-    html+=`<tr${drAttr}>${antCell}${bNoCell}${jeuCell}${winnerCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
+    </select></td>`;
+    const paleoCell=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2,sp);
+    const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
+
+    html+=`<tr data-row="${mIdx}">${antCell}${dateCell}${bNoCell}${jeuCell}${winnerCell}${statusCell}${paleoCell}${mailCell}</tr>`;
     if(g.extra){
       const bNo2=g.extra[2]||'';
-      html+=`<tr><td style="text-align:center;color:var(--text-faint);font-size:11px;border-bottom:0.5px solid var(--border)">${esc(bNo2)}</td></tr>`;
+      html+=`<tr><td style="text-align:center;color:var(--text-faint);font-size:11px">${esc(bNo2)}</td></tr>`;
     }
   });
 
   html+='</tbody></table></div></div>';
+  panel.innerHTML=html;
 
-  // Stock pills par antenne
+  // Stock pills
   const antOrder=['O','Lac','Rouge','LFM','MOC'];
   const antColors={O:'var(--one-bg),var(--one),var(--one-bd)',Lac:'var(--lac-bg),var(--lac),var(--lac-bd)',Rouge:'var(--rouge-bg),var(--rouge),var(--rouge-bd)',LFM:'var(--lfm-bg),var(--lfm),var(--lfm-bd)',MOC:'var(--moc-bg),var(--moc),var(--moc-bd)'};
   let stockHtml='';
   antOrder.forEach(ak=>{
-    const s=antStockMap[ak];
-    if(!s) return;
+    const st=antStockMap[ak];
+    if(!st||st.libre===0) return;
     const [bg,fg,bd]=antColors[ak].split(',');
-    stockHtml+=`<div class="stat-pill" style="background:${bg};color:${fg};border-color:${bd};cursor:pointer" onclick="setFilter('libre',${idx})" title="Filtrer billets libres ${s.label}">
-      <strong>${s.libre}</strong> libre${s.libre!==1?'s':''} / ${s.total} · ${s.label}
-    </div>`;
+    stockHtml+=`<div class="stat-pill" style="background:${bg};color:${fg};border-color:${bd};cursor:pointer" onclick="setFilter('libre',${idx})"><strong>${st.libre}</strong> libre${st.libre!==1?'s':''} / ${st.total} · ${st.label}</div>`;
   });
-
-  // Inject stock pills into stats bar
-  html=html.replace('<div class="stats-bar">',`<div class="stats-bar">`);
-  // Insert before closing stats-bar div
-  const statsClose='</div>\n  <div class="filter-bar">';
-
-  panel.innerHTML=html;
-  // Insert stock pills after stats bar
   const statsBar=panel.querySelector('.stats-bar');
   if(statsBar&&stockHtml){
     const div=document.createElement('div');
@@ -690,16 +658,21 @@ function renderPanel(idx){
   updateSendBadge();
 }
 
-function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,pMail2){
-  const filled=pNom||pPre||pMail;
-  const txt=filled?`${pNom} ${pPre} — ${pMail}`:'non renseigné';
+function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,pMail2,sp){
+  sp=sp||1;
+  const filled1=pNom||pPre||pMail;
+  const filled2=pNom2||pPre2||pMail2;
+  const txt1=filled1?`${pNom} ${pPre} — ${pMail}`:'non renseigné';
+  const txt2=filled2?`${pNom2} ${pPre2} — ${pMail2}`:'';
   const extraArg=extraRow?`,${extraRow},'${jsEsc(pNom2||'')}','${jsEsc(pPre2||'')}','${jsEsc(pMail2||'')}'`:",null,'','',''";
   const editBtn=ant?`<button class="btn-edit-paleo" onclick="openPaleoModal(${idx},${rowNum},'${jsEsc(bNo)}','${jsEsc(pNom)}','${jsEsc(pPre)}','${jsEsc(pMail)}'${extraArg})" title="Modifier données Paléo">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
   </button>`:'';
-  return `<td style="max-width:200px">
+  // When sp=2, show both accounts stacked in one rowspan=2 cell
+  const bothContent=sp===2?`<div class="paleo-text ${filled1?'':'empty'}" style="border-bottom:0.5px solid var(--border);padding-bottom:4px;margin-bottom:4px">${esc(txt1)}</div><div class="paleo-text ${filled2?'':'empty'}">${esc(txt2||'non renseigné')}</div>`:`<div class="paleo-text ${filled1?'':'empty'}">${esc(txt1)}</div>`;
+  return `<td rowspan="${sp}" style="max-width:220px;vertical-align:middle">
     <div class="paleo-inline">
-      <div class="paleo-text ${filled?'':'empty'}">${esc(txt)}</div>
+      <div style="flex:1;min-width:0">${bothContent}</div>
       ${editBtn}
     </div>
   </td>`;
@@ -989,42 +962,35 @@ function setFilter(f,idx){
 
 function renderAllPanel(){
   const panel=document.getElementById('panel-3');
-
-  // Collect all rows from all sheets with sheet index
   let allGroups=[];
   for(let si=0;si<3;si++){
     const rows=(sheetData[si]||[]).slice(1);
     const groups=buildGroups(rows);
     groups.forEach(g=>{
-      if((g.main[0]||'').trim()) allGroups.push({...g, sheetIdx:si});
+      if((g.main[0]||'').trim()) allGroups.push({...g,sheetIdx:si});
     });
   }
-
-  // Sort by date
   allGroups.sort((a,b)=>{
     const da=parseInt((a.main[1]||'').match(/\d+/)?.[0]||99);
     const db=parseInt((b.main[1]||'').match(/\d+/)?.[0]||99);
     return da-db;
   });
-
-  // Filter
   if(activeFilters.size>0){
     allGroups=allGroups.filter(g=>{
       const nom=(g.main[5]||'').trim();
       const ant=(g.main[0]||'').trim();
       const isSlotLibre=ant&&!nom;
       const st=(g.main[4]||'').toLowerCase();
-      return matchesFilters(st, isSlotLibre);
+      return matchesFilters(st,isSlotLibre);
     });
   }
-
   const libresAll=allGroups.filter(g=>!(g.main[5]||'').trim()).length;
   const gagnants=allGroups.filter(g=>(g.main[5]||'').trim());
-  let total=gagnants.length;
-  let contact=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('contact');}).length;
-  let repondu=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('répondu')||st.includes('repondu');}).length;
-  let billets=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('expédié')||st.includes('expedie')||st.includes('billet');}).length;
-  let attenteN=total-contact-repondu-billets;
+  const total=gagnants.length;
+  const contact=gagnants.filter(g=>(g.main[4]||'').toLowerCase().includes('contact')).length;
+  const repondu=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('répondu')||st.includes('repondu');}).length;
+  const billets=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('expédié')||st.includes('expedie')||st.includes('billet');}).length;
+  const attenteN=total-contact-repondu-billets;
 
   let html=`<div class="stats-bar">
     <div class="stat-pill"><strong>${total}</strong> gagnants</div>
@@ -1044,9 +1010,13 @@ function renderAllPanel(){
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
-    <th>Ant.</th><th>#</th><th>Jeu</th><th>Gagnant</th><th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
-    <th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
+    <th>Ant.</th><th>Date</th><th>#</th><th>Jeu</th><th>Gagnant</th><th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
+
+  const NCOLS=8;
+  const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+  const copyIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+  const sendIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
 
   let lastDateAll='';
   allGroups.forEach(g=>{
@@ -1054,7 +1024,7 @@ function renderAllPanel(){
     const r=g.main;
     const ant=(r[0]||'').trim();
     const ak=antKey(ant);
-    const date=r[1]||'';
+    const date=(r[1]||'').trim();
     const bNo=r[2]||'';
     const jeu=r[3]||'';
     const statut=r[4]||'en attente';
@@ -1070,57 +1040,55 @@ function renderAllPanel(){
     const sc=sClass(statut);
 
     if(date && date!==lastDateAll){
-      html+=`<tr class="day-sep"><td colspan="7"><div class="day-sep-label">${fmtDate(date)}</div></td></tr>`;
+      html+=`<tr class="day-sep"><td colspan="${NCOLS}" style="padding:0"><div class="day-sep-label" style="padding:8px 10px">${fmtDate(date)}</div></td></tr>`;
       lastDateAll=date;
     }
 
     if(isSlotLibre){
+      const bNo2=g.extra?g.extra[2]||'':'';
       html+=`<tr class="slot-libre" data-row="${mIdx}">
         <td rowspan="${sp}" style="vertical-align:middle"><span class="ant-libre">${antLabel(ant)}</span></td>
-        <td style="text-align:center;color:var(--text-faint);font-size:11px">${esc(bNo)}</td>
-        <td colspan="4" style="vertical-align:middle" rowspan="${sp}">
+        <td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-faint)">${fmtDate(date)}</td>
+        <td style="text-align:center;color:var(--text-faint);font-size:11px;font-weight:600">${esc(bNo)}</td>
+        <td colspan="5" rowspan="${sp}" style="vertical-align:middle">
           <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Attribuer un gagnant
           </button>
         </td>
-        <td rowspan="${sp}"></td><td rowspan="${sp}"></td>
       </tr>`;
       if(g.extra){
-        html+=`<tr class="slot-libre"><td style="text-align:center;color:var(--text-faint);font-size:11px">${esc(g.extra[2]||'')}</td></tr>`;
+        html+=`<tr class="slot-libre"><td style="text-align:center;color:var(--text-faint);font-size:11px;font-weight:600">${esc(bNo2)}</td></tr>`;
       }
       return;
     }
 
-    const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    const copyIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-    const sendIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
     const canSendAll=isSendEnabled(idx)&&idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
-
     const antCell=`<td rowspan="${sp}" style="vertical-align:middle"><span class="ant-badge ant-${ak}">${antLabel(ant)}</span></td>`;
-    const bNoCell=`<td style="vertical-align:middle;text-align:center;color:var(--text-muted);font-weight:600;font-size:11px">${esc(bNo)}</td>`;
+    const dateCell=`<td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-muted);font-size:11px">${fmtDate(date)}</td>`;
+    const bNoCell=`<td style="text-align:center;color:var(--text-muted);font-weight:600;font-size:11px">${esc(bNo)}</td>`;
     const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:110px"><div class="inline-field"><div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
-    const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;min-width:180px">
+    const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;min-width:160px">
       <div style="display:flex;align-items:flex-start;gap:4px">
         <div class="winner-info" style="flex:1;min-width:0">
-          <div class="winner-name">${esc(nom)||'<span style="color:var(--text-faint);font-style:italic;font-weight:400">—</span>'}</div>
-          <div class="winner-meta">
-            ${email?`<span>${esc(email)}<button class="btn-edit-inline" style="opacity:1;margin-left:1px" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier">${copyIconAll}</button></span>`:''}
+          <div class="winner-name">${esc(nom)}</div>
+          ${tel?`<div class="winner-meta">${esc(tel)}</div>`:''}
+          <div class="winner-meta" style="display:inline-flex;align-items:center;gap:2px">
+            ${email?`${esc(email)}<button class="btn-edit-inline" style="opacity:1" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier">${copyIconAll}</button>`:''}
           </div>
-          ${tel?`<div class="winner-meta" style="margin-top:1px">${esc(tel)}</div>`:''}
           ${canSendAll?`<div style="margin-top:4px"><button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')">${sendIconAll} Envoyer</button></div>`:''}
         </div>
         <button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button>
       </div>
     </td>`;
     const hasInfoAll=!!(nom||tel||email);
-    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${hasInfoAll||statut!=='en attente'?sc:'s-locked'}" ${hasInfoAll||statut!=='en attente'?'':'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"'} onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
+    const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${hasInfoAll||statut!=='en attente'?sc:'s-locked'}" ${hasInfoAll||statut!=='en attente'?'':'disabled'} onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
+    const paleoCell=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2,sp);
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
-    const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
-    html+=`<tr data-row="${mIdx}">${antCell}${bNoCell}${jeuCell}${winnerCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
+    html+=`<tr data-row="${mIdx}">${antCell}${dateCell}${bNoCell}${jeuCell}${winnerCell}${statusCell}${paleoCell}${mailCell}</tr>`;
     if(g.extra){
       const bNo2=g.extra[2]||'';
-      html+=`<tr><td style="text-align:center;color:var(--text-faint);font-size:11px;border-bottom:0.5px solid var(--border)">${esc(bNo2)}</td></tr>`;
+      html+=`<tr><td style="text-align:center;color:var(--text-faint);font-size:11px">${esc(bNo2)}</td></tr>`;
     }
   });
 
