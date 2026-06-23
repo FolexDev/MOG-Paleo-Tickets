@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Paléo Tickets 2026 — Media One Group</title>
 <script src="config.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client" defer></script>
 <style>
 :root{
   --bg:#f7f6f3;--surface:#fff;--border:#e8e6e0;--border-strong:#ccc9c0;
@@ -282,8 +282,7 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
 <div id="toast"></div>
 
 <script>
-const CLIENT_ID=window.CLIENT_ID;
-const API_KEY=window.API_KEY;
+// CLIENT_ID, API_KEY, WEBHOOK_URL, ALLOWED, SHEETS sont définis dans config.js
 
 // Mapping abrév → jour complet pour les dates du Paléo 2026
 const DAY_MAP={'mar':'Mardi','mer':'Mercredi','jeu':'Jeudi','ven':'Vendredi','sam':'Samedi','dim':'Dimanche','lun':'Lundi'};
