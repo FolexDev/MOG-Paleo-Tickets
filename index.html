@@ -275,6 +275,19 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
       <div><div class="modal-title">Administration</div><div class="modal-sub">50 dernières connexions</div></div>
       <button class="modal-close" onclick="closeModal('modal-admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
+    <div style="padding:12px 0;border-bottom:0.5px solid var(--border);margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Envoi de mail depuis le site</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:12px;cursor:pointer">
+          <span>One FM &amp; Radio Lac</span>
+          <input type="checkbox" id="toggle-send-onelac" onchange="saveSendToggle()" style="width:16px;height:16px;cursor:pointer">
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:12px;cursor:pointer">
+          <span>LFM &amp; Rouge</span>
+          <input type="checkbox" id="toggle-send-lfmrouge" onchange="saveSendToggle()" style="width:16px;height:16px;cursor:pointer">
+        </label>
+      </div>
+    </div>
     <ul class="log-list" id="admin-log-list"></ul>
   </div>
 </div>
@@ -363,7 +376,7 @@ async function loadSheet(idx){
     renderPanel(idx);
   }catch(e){document.getElementById('panel-'+s.panel).innerHTML=`<div class="loading" style="color:#cc2244">Erreur : ${e.message}</div>`;}
 }
-async function loadAllSheets(){for(let i=0;i<3;i++) await loadSheet(i);renderAllPanel();}
+async function loadAllSheets(){for(let i=0;i<3;i++) await loadSheet(i);await loadSendConfig();renderAllPanel();}
 function refreshAll(){loadAllSheets();showToast('Actualisation en cours...');}
 
 /* HELPERS */
@@ -492,7 +505,7 @@ function renderPanel(idx){
     const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
     const copyIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
     const sendIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
-    const canSend=idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
+    const canSend=isSendEnabled(idx)&&idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
     const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIcon}</button>`:''}${canSend?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')" title="Envoyer le mail Paléo">${sendIcon} Envoyer</button>`:''}</div></td>`;
         const hasInfo=!!(nom||tel||email);
     const isLocked=!hasInfo&&(!statut||statut==='en attente');
@@ -894,7 +907,7 @@ function renderAllPanel(){
     const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
     const copyIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
     const sendIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
-    const canSendAll=idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
+    const canSendAll=isSendEnabled(idx)&&idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
     const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIconAll}</button>`:''}${canSendAll?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')" title="Envoyer le mail Paléo">${sendIconAll} Envoyer</button>`:''}</div></td>`;
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${(!!(nom||tel||email))||statut!=='en attente'?sc:'s-locked'}" ${(!!(nom||tel||email))||statut!=='en attente'?'':'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"'} onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
@@ -972,7 +985,35 @@ function logConnection(email){
   if(logs.length>50) logs.length=50;
   localStorage.setItem('paleo_logs',JSON.stringify(logs));
 }
+const CONFIG_SHEET_ID='15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c';
+const CONFIG_SHEET_NAME='ConfigHTML';
+let sendConfig={onelac:false,lfmrouge:false};
+
+async function loadSendConfig(){
+  try{
+    const resp=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG_SHEET_ID}/values/${CONFIG_SHEET_NAME}!A1:A2?key=${API_KEY}`,{headers:{Authorization:'Bearer '+accessToken}});
+    const data=await resp.json();
+    const vals=data.values||[];
+    sendConfig.onelac=(vals[0]&&vals[0][0])==='1';
+    sendConfig.lfmrouge=(vals[1]&&vals[1][0])==='1';
+  }catch(e){sendConfig={onelac:false,lfmrouge:false};}
+}
+async function saveSendToggle(){
+  sendConfig.onelac=document.getElementById('toggle-send-onelac').checked;
+  sendConfig.lfmrouge=document.getElementById('toggle-send-lfmrouge').checked;
+  await sheetWrite(CONFIG_SHEET_ID,`${CONFIG_SHEET_NAME}!A1:A2`,[[sendConfig.onelac?'1':'0'],[sendConfig.lfmrouge?'1':'0']]);
+  for(let i=0;i<3;i++) renderPanel(i);
+  if(document.getElementById('tab-all')?.classList.contains('active')) renderAllPanel();
+}
+function isSendEnabled(idx){
+  if(idx===0) return sendConfig.onelac;
+  if(idx===2) return sendConfig.lfmrouge;
+  return false;
+}
 function openAdmin(){
+  // Init toggles
+  document.getElementById('toggle-send-onelac').checked=sendConfig.onelac;
+  document.getElementById('toggle-send-lfmrouge').checked=sendConfig.lfmrouge;
   const logs=JSON.parse(localStorage.getItem('paleo_logs')||'[]');
   const list=document.getElementById('admin-log-list');
   if(logs.length===0){
