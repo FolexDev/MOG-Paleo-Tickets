@@ -273,7 +273,10 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
   <div class="modal">
     <div class="modal-header">
       <div><div class="modal-title">Administration</div><div class="modal-sub">50 dernières connexions</div></div>
-      <button class="modal-close" onclick="closeModal('modal-admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <a href="documentation.html" target="_blank" style="width:26px;height:26px;border-radius:50%;border:0.5px solid var(--border-strong);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text-muted);text-decoration:none;flex-shrink:0" title="Documentation">?</a>
+        <button class="modal-close" onclick="closeModal('modal-admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
     </div>
     <div style="padding:12px 0;border-bottom:0.5px solid var(--border);margin-bottom:12px">
       <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Envoi de mail depuis le site</div>
