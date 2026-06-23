@@ -493,7 +493,7 @@ function renderPanel(idx){
     const copyIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
     const sendIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
     const canSend=idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
-    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIcon}</button>`:''}${canSend?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}')" title="Envoyer le mail Paléo">${sendIcon} Envoyer</button>`:''}</div></td>`;
+    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIcon}</button>`:''}${canSend?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')" title="Envoyer le mail Paléo">${sendIcon} Envoyer</button>`:''}</div></td>`;
         const hasInfo=!!(nom||tel||email);
     const isLocked=!hasInfo&&(!statut||statut==='en attente');
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${isLocked?'s-locked':sc}" ${isLocked?'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"':''} onchange="updateStatus(this,${idx},${mIdx})">
@@ -895,7 +895,7 @@ function renderAllPanel(){
     const copyIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
     const sendIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
     const canSendAll=idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
-    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIconAll}</button>`:''}${canSendAll?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}')" title="Envoyer le mail Paléo">${sendIconAll} Envoyer</button>`:''}</div></td>`;
+    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIconAll}</button>`:''}${canSendAll?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')" title="Envoyer le mail Paléo">${sendIconAll} Envoyer</button>`:''}</div></td>`;
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${(!!(nom||tel||email))||statut!=='en attente'?sc:'s-locked'}" ${(!!(nom||tel||email))||statut!=='en attente'?'':'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"'} onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
     const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
@@ -936,17 +936,19 @@ function getMailSubject(ak){
     ? `Vos billets Paléo offerts par ${antName}`
     : `Tes billets Paléo offerts par ${antName}`;
 }
-async function sendMail(btn,idx,rowIdx,ak,nom,concours,email){
+async function sendMail(btn,idx,rowIdx,ak,nom,concours,email,dateRaw){
   if(btn.classList.contains('sending')||btn.classList.contains('sent')) return;
   btn.classList.add('sending');
   btn.textContent='Envoi…';
   const sujet=getMailSubject(ak);
   const antLabels={'O':'One FM','Lac':'Radio Lac','Rouge':'Rouge','LFM':'LFM'};
+  const mailHTML=buildMailHTML(ak,dateRaw,nom);
+  const mailPlain=mailHTML.replace(/<a href="([^"]+)">([^<]+)<\/a>/g,'$2 ($1)').replace(/<br>/g,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').trim();
   try{
     const resp=await fetch(WEBHOOK_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({antenne:antLabels[ak]||ak,nom,concours,email,sujet})
+      body:JSON.stringify({antenne:antLabels[ak]||ak,nom,concours,email,sujet,mailHTML,mailPlain})
     });
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     // Mettre à jour Sheets → "contact fait"
