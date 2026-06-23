@@ -112,9 +112,9 @@ tr:last-child td{border-bottom:none}
 tr:hover td{background:#faf9f7}
 
 /* DAY SEPARATOR */
-tr.day-sep td{background:linear-gradient(135deg,#f7634a 0%,#e8307a 100%);padding:0;border-bottom:none;border-top:none}
-.day-sep-label{font-size:11px;font-weight:700;color:#fff;letter-spacing:.08em;display:flex;align-items:center;gap:8px;padding:7px 12px;text-transform:uppercase}
-.day-sep-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.3)}
+tr.day-sep td{background:var(--bg);padding:6px 10px;border-bottom:1px solid var(--border);border-top:1px solid var(--border)}
+.day-sep-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:8px}
+.day-sep-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* ANTENNE BADGES */
 .ant-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
@@ -311,12 +311,14 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070}
       <button class="modal-close" onclick="closeModal('modal-winner')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body">
-      <div id="mw-fields"></div>
+      <div class="form-group"><label class="form-label">Prénom et Nom</label><input class="form-input" id="mw-nom" type="text" placeholder="Marie Dupont" /></div>
+      <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="mw-tel" type="text" /></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mw-email" type="email" /></div>
+      <div class="form-group"><label class="form-label">Jeu / Origine</label><input class="form-input" id="mw-jeu" type="text" placeholder="ex: 30 ans pour 30 minutes" /></div>
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('modal-winner')">Annuler</button>
         <button class="btn-save" id="mw-save-btn" onclick="saveWinner()">Enregistrer</button>
       </div>
-      <p class="modal-hint" id="mw-hint" style="display:none"></p>
     </div>
   </div>
 </div>
@@ -482,11 +484,9 @@ function buildGroups(rows){
     const nx=rows[i+1];
     const nxAnt=(nx?.[0]||'').trim();
     const nxNo=parseInt(nx?.[2]||0);
-    const nxNom=(nx?.[5]||'').trim();
-    // Merge as pair only if: has antenna, odd billet, next row is empty antenne, consecutive number AND no name on line 2
-    if(ant&&bNo%2===1&&nx&&!nxAnt&&nxNo===bNo+1&&!nxNom){
+    if(ant&&bNo%2===1&&nx&&!nxAnt&&nxNo===bNo+1){
       g.push({main:r,extra:nx,mainIdx:i+2,extraIdx:i+3,span:2});i+=2;
-    } else {
+    }else{
       g.push({main:r,extra:null,mainIdx:i+2,extraIdx:null,span:1});i++;
     }
   }
@@ -586,7 +586,7 @@ function renderPanel(idx){
         <td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-faint)">${fmtDate(date)}</td>
         <td style="text-align:center;color:var(--text-faint);font-size:11px;font-weight:600">${esc(bNo)}</td>
         <td colspan="5" rowspan="${sp}" style="vertical-align:middle">
-          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','',${g.extra?g.extraIdx:null})">
+          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Attribuer un gagnant
           </button>
@@ -637,6 +637,24 @@ function renderPanel(idx){
 
   html+='</tbody></table></div></div>';
   panel.innerHTML=html;
+
+  // Stock pills
+  const antOrder=['O','Lac','Rouge','LFM','MOC'];
+  const antColors={O:'var(--one-bg),var(--one),var(--one-bd)',Lac:'var(--lac-bg),var(--lac),var(--lac-bd)',Rouge:'var(--rouge-bg),var(--rouge),var(--rouge-bd)',LFM:'var(--lfm-bg),var(--lfm),var(--lfm-bd)',MOC:'var(--moc-bg),var(--moc),var(--moc-bd)'};
+  let stockHtml='';
+  antOrder.forEach(ak=>{
+    const st=antStockMap[ak];
+    if(!st||st.libre===0) return;
+    const [bg,fg,bd]=antColors[ak].split(',');
+    stockHtml+=`<div class="stat-pill" style="background:${bg};color:${fg};border-color:${bd};cursor:pointer" onclick="setFilter('libre',${idx})"><strong>${st.libre}</strong> libre${st.libre!==1?'s':''} / ${st.total} · ${st.label}</div>`;
+  });
+  const statsBar=panel.querySelector('.stats-bar');
+  if(statsBar&&stockHtml){
+    const div=document.createElement('div');
+    div.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.5rem';
+    div.innerHTML=stockHtml;
+    statsBar.after(div);
+  }
   updateSendBadge();
 }
 
@@ -676,81 +694,41 @@ async function updateStatus(select,sheetIdx,rowNum){
 }
 
 /* WINNER MODAL */
-function openWinnerModal(idx,row,nom,tel,email,jeu,extraRow){
-  currentEditWinner={idx,row,extraRow:extraRow||null};
+function openWinnerModal(idx,row,nom,tel,email,jeu){
+  currentEditWinner={idx,row};
   const isLibre=!nom&&!tel&&!email;
-  const hasPair=!!extraRow;
-  document.getElementById('mw-title').textContent=isLibre?'Attribuer les billets':'Modifier le gagnant';
-  document.getElementById('mw-sub').textContent=SHEETS[idx].name;
+  document.getElementById('mw-title').textContent=isLibre?`Attribuer le billet #${row}`:'Modifier le gagnant';
+  document.getElementById('mw-sub').textContent=`${SHEETS[idx].name}`;
   document.getElementById('mw-save-btn').textContent=isLibre?'Attribuer':'Enregistrer';
-
-  const hint=document.getElementById('mw-hint');
-  hint.innerHTML=isLibre?`Le billet passe de <strong>libre</strong> à <strong>en attente</strong>.`:'';
+  // hint line
+  let hint=document.getElementById('mw-hint');
+  if(!hint){hint=document.createElement('p');hint.id='mw-hint';hint.className='modal-hint';document.getElementById('mw-save-btn').parentElement.after(hint);}
+  hint.innerHTML=isLibre?`Le billet passe alors de <strong>libre</strong> à <strong>en attente</strong>.`:'';
   hint.style.display=isLibre?'block':'none';
-
-  const fields=document.getElementById('mw-fields');
-  const splitBlock=hasPair?`
-    <div style="display:flex;align-items:center;gap:8px;margin:1rem 0 .75rem;padding:.65rem .85rem;background:var(--bg);border-radius:10px;border:1.5px solid var(--border)">
-      <input type="checkbox" id="mw-split" style="width:15px;height:15px;cursor:pointer;accent-color:#e8307a" onchange="toggleWinnerSplit()" />
-      <label for="mw-split" style="font-size:12px;font-weight:600;cursor:pointer;color:var(--text)">Séparer la paire — 2 gagnants différents</label>
-    </div>
-    <div id="mw-block-a" style="margin-bottom:.5rem">
-      <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">Billet 1</div>
-      <div class="form-group"><label class="form-label">Prénom et Nom</label><input class="form-input" id="mw-nom" type="text" placeholder="Marie Dupont" value="${esc(nom)}" /></div>
-      <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="mw-tel" type="tel" value="${esc(tel)}" /></div>
-      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mw-email" type="email" value="${esc(email)}" /></div>
-      <div class="form-group"><label class="form-label">Jeu / Origine</label><input class="form-input" id="mw-jeu" type="text" placeholder="ex: 30 ans pour 30 minutes" value="${esc(jeu)}" /></div>
-    </div>
-    <div id="mw-block-b" style="display:none">
-      <div style="height:1px;background:var(--border);margin:.75rem 0"></div>
-      <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">Billet 2</div>
-      <div class="form-group"><label class="form-label">Prénom et Nom</label><input class="form-input" id="mw-nom2" type="text" placeholder="Jean Dupont" /></div>
-      <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="mw-tel2" type="tel" /></div>
-      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mw-email2" type="email" /></div>
-      <div class="form-group"><label class="form-label">Jeu / Origine</label><input class="form-input" id="mw-jeu2" type="text" placeholder="ex: 30 ans pour 30 minutes" value="${esc(jeu)}" /></div>
-    </div>`
-  :`<div class="form-group"><label class="form-label">Prénom et Nom</label><input class="form-input" id="mw-nom" type="text" placeholder="Marie Dupont" value="${esc(nom)}" /></div>
-    <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="mw-tel" type="tel" value="${esc(tel)}" /></div>
-    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mw-email" type="email" value="${esc(email)}" /></div>
-    <div class="form-group"><label class="form-label">Jeu / Origine</label><input class="form-input" id="mw-jeu" type="text" placeholder="ex: 30 ans pour 30 minutes" value="${esc(jeu)}" /></div>`;
-
-  fields.innerHTML=splitBlock;
+  document.getElementById('mw-nom').value=nom;
+  document.getElementById('mw-tel').value=tel;
+  document.getElementById('mw-email').value=email;
+  document.getElementById('mw-jeu').value=jeu;
   document.getElementById('modal-winner').classList.add('open');
-  setTimeout(()=>document.getElementById('mw-nom').focus(),50);
+  document.getElementById('mw-nom').focus();
 }
-
-function toggleWinnerSplit(){
-  const split=document.getElementById('mw-split').checked;
-  document.getElementById('mw-block-b').style.display=split?'block':'none';
-}
-
 async function saveWinner(){
   if(!currentEditWinner)return;
-  const {idx,row,extraRow}=currentEditWinner;
+  const {idx,row}=currentEditWinner;
   const nom=document.getElementById('mw-nom').value.trim();
   const tel=document.getElementById('mw-tel').value.trim();
   const email=document.getElementById('mw-email').value.trim();
   const jeu=document.getElementById('mw-jeu').value.trim();
-  const splitEl=document.getElementById('mw-split');
-  const isSplit=splitEl&&splitEl.checked;
   const btn=document.getElementById('mw-save-btn');
   btn.disabled=true;btn.textContent='Enregistrement...';
   try{
+    // Col D=jeu(idx3), F=nom(idx5), G=tel(idx6), H=email(idx7)
+    // On écrit D:H d'un coup en incluant col E (statut) qu'on ne touche pas → on relit d'abord
     const cur=sheetData[idx][row-1]||[];
-    const statut=cur[4]||'en attente';
+    const statut=cur[4]||'';
     await sheetWrite(SHEETS[idx].id,`D${row}:H${row}`,[[jeu,statut,nom,tel,email]]);
-    if(isSplit&&extraRow){
-      const nom2=document.getElementById('mw-nom2').value.trim();
-      const tel2=document.getElementById('mw-tel2').value.trim();
-      const email2=document.getElementById('mw-email2').value.trim();
-      const jeu2=document.getElementById('mw-jeu2').value.trim();
-      // Write antenna from main row to extra row so it becomes independent
-      const antVal=sheetData[idx][row-1]?.[0]||'';
-      const dateVal=sheetData[idx][row-1]?.[1]||'';
-      await sheetWrite(SHEETS[idx].id,`A${extraRow}:H${extraRow}`,[[antVal,dateVal,sheetData[idx][extraRow-1]?.[2]||'','',jeu2,'en attente',nom2,tel2,email2]]);
-    }
     closeModal('modal-winner');
-    showToast(isSplit?'Paire séparée et attribuée':'Gagnant mis à jour');
+    showToast('Gagnant mis à jour');
     await loadSheet(idx);
   }catch(e){showToast('Erreur : '+e.message);}
   finally{btn.disabled=false;btn.textContent='Enregistrer';}
@@ -1073,7 +1051,7 @@ function renderAllPanel(){
         <td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-faint)">${fmtDate(date)}</td>
         <td style="text-align:center;color:var(--text-faint);font-size:11px;font-weight:600">${esc(bNo)}</td>
         <td colspan="5" rowspan="${sp}" style="vertical-align:middle">
-          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','',${g.extra?g.extraIdx:null})">
+          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Attribuer un gagnant
           </button>
