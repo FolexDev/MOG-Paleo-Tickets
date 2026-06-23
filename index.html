@@ -398,7 +398,7 @@ function fmtDate(v){
 }
 function sClass(s){if(!s)return's-attente';s=s.toLowerCase();if(s.includes('expédié')||s.includes('expedie')||s.includes('billet'))return's-billets';if(s.includes('répondu')||s.includes('repondu'))return's-repondu';if(s.includes('contact'))return's-contact';return's-attente';}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function jsEsc(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+function jsEsc(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\r?\n/g,' ').replace(/"/g,'&quot;');}
 
 /* MERGE DETECTION */
 function buildGroups(rows){
