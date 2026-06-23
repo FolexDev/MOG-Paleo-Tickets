@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation — Paléo Tickets 2026</title>
+<style>
+:root{
+  --bg:#f7f6f3;--surface:#fff;--border:#e8e6e0;
+  --text:#1a1a18;--text-muted:#6b6860;--text-faint:#a09e99;
+  --one:#e8352a;--lac:#0057a8;--rouge:#cc2244;--lfm:#e07b00;--moc:#2d7a4f;
+  --accent:#1a1a18;--r:8px;--rlg:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* LAYOUT */
+.layout{display:flex;min-height:100vh}
+nav{width:240px;background:var(--surface);border-right:0.5px solid var(--border);padding:1.5rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0}
+.nav-logo{padding:0 1.25rem 1.25rem;border-bottom:0.5px solid var(--border);margin-bottom:1rem}
+.nav-logo-brand{font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--text-muted);text-transform:uppercase}
+.nav-logo-title{font-size:13px;font-weight:600;color:var(--text);margin-top:2px}
+.nav-logo-sub{font-size:11px;color:var(--text-faint);margin-top:1px}
+nav a{display:block;padding:5px 1.25rem;font-size:12px;color:var(--text-muted);text-decoration:none;border-left:2px solid transparent}
+nav a:hover{color:var(--text);background:var(--bg)}
+nav a.active{color:var(--text);border-left-color:var(--text);font-weight:500}
+.nav-section{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding:1rem 1.25rem .25rem}
+
+content{flex:1;padding:3rem 4rem;max-width:860px}
+@media(max-width:768px){.layout{flex-direction:column}nav{width:100%;height:auto;position:relative}.nav-links{display:none}content{padding:1.5rem}}
+
+/* TYPOGRAPHY */
+h1{font-size:28px;font-weight:700;line-height:1.2;margin-bottom:.5rem}
+h2{font-size:18px;font-weight:600;margin-top:3rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:0.5px solid var(--border)}
+h3{font-size:14px;font-weight:600;margin-top:1.5rem;margin-bottom:.5rem;color:var(--text)}
+p{margin-bottom:.75rem;color:var(--text-muted)}
+p strong{color:var(--text)}
+ul,ol{margin:.5rem 0 .75rem 1.25rem;color:var(--text-muted)}
+li{margin-bottom:.3rem}
+li strong{color:var(--text)}
+
+.page-header{margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:0.5px solid var(--border)}
+.page-header p{font-size:15px;color:var(--text-muted);margin-top:.5rem;margin-bottom:0}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);text-decoration:none;margin-bottom:1.5rem;padding:4px 0}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px}
+
+/* CARDS & CALLOUTS */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:1rem}
+.callout{border-radius:var(--r);padding:.75rem 1rem;margin:1rem 0;font-size:13px}
+.callout-info{background:#eef4fc;border:0.5px solid #b3cef0;color:#0057a8}
+.callout-warn{background:#fff4e0;border:0.5px solid #f0c070;color:#b35f00}
+.callout-tip{background:#eef7f2;border:0.5px solid #9fd4b8;color:#1a6b3f}
+.callout strong{display:block;margin-bottom:2px;font-weight:600}
+
+/* BADGES */
+.badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-one{background:#fdf0ef;color:var(--one);border:0.5px solid #f5b8b5}
+.badge-lac{background:#eef4fc;color:var(--lac);border:0.5px solid #b3cef0}
+.badge-rouge{background:#fceef1;color:var(--rouge);border:0.5px solid #f0b3c0}
+.badge-lfm{background:#fdf5e8;color:var(--lfm);border:0.5px solid #f0d08a}
+.badge-moc{background:#eef7f2;color:var(--moc);border:0.5px solid #9fd4b8}
+
+/* STATUS */
+.status{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.s-attente{background:#fff4e0;color:#b35f00;border:0.5px solid #f0c070}
+.s-contact{background:#f3eeff;color:#5b33b0;border:0.5px solid #c4a8f5}
+.s-repondu{background:#fff0f0;color:#b02020;border:0.5px solid #f5a8a8}
+.s-billets{background:#eef7f2;color:#1a6b3f;border:0.5px solid #9fd4b8}
+
+/* TABLE */
+.doc-table{width:100%;border-collapse:collapse;font-size:12px;margin:1rem 0}
+.doc-table th{text-align:left;padding:7px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);border-bottom:0.5px solid var(--border);background:var(--bg)}
+.doc-table td{padding:8px 10px;border-bottom:0.5px solid var(--border);color:var(--text-muted);vertical-align:top}
+.doc-table td strong{color:var(--text)}
+.doc-table tr:last-child td{border-bottom:none}
+
+/* STEP */
+.steps{counter-reset:step;margin:1rem 0}
+.step{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start}
+.step-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--text);color:var(--surface);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-weight:600;font-size:13px;color:var(--text);margin-bottom:2px}
+.step-desc{font-size:12px;color:var(--text-muted)}
+
+/* CODE */
+code{background:var(--bg);border:0.5px solid var(--border);border-radius:4px;padding:1px 5px;font-family:'SF Mono','Monaco',monospace;font-size:11px;color:var(--text)}
+pre{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem;overflow-x:auto;font-size:11px;font-family:'SF Mono','Monaco',monospace;color:var(--text);margin:1rem 0}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
+.flow-step{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:5px 12px;font-size:12px;font-weight:500}
+.flow-arrow{color:var(--text-faint);font-size:14px}
+
+/* DIVIDER */
+hr{border:none;border-top:0.5px solid var(--border);margin:2rem 0}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-brand">Media One Group</div>
+    <div class="nav-logo-title">Paléo Tickets 2026</div>
+    <div class="nav-logo-sub">Documentation</div>
+  </div>
+  <div class="nav-section">Démarrage</div>
+  <a href="#connexion">Connexion</a>
+  <a href="#interface">Interface générale</a>
+  <div class="nav-section">Fonctionnalités</div>
+  <a href="#onglets">Onglets & antennes</a>
+  <a href="#statuts">Statuts</a>
+  <a href="#actions">Actions sur une ligne</a>
+  <a href="#paleo-tickets">Données Paléo Tickets</a>
+  <a href="#envoi-mail">Envoi de mail</a>
+  <a href="#recherche">Recherche & filtres</a>
+  <div class="nav-section">Administration</div>
+  <a href="#admin">Modale admin</a>
+  <a href="#make">Scénario Make</a>
+  <div class="nav-section">Technique</div>
+  <a href="#architecture">Architecture</a>
+  <a href="#fichiers">Fichiers</a>
+  <a href="#sheets">Structure des Sheets</a>
+</nav>
+
+<content>
+  <a href="index.html" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Retour à l'application
+  </a>
+
+  <div class="page-header">
+    <h1>Documentation</h1>
+    <p>Guide complet du système de gestion de distribution des billets Paléo 2026 — Media One Group.</p>
+  </div>
+
+  <!-- CONNEXION -->
+  <h2 id="connexion">Connexion</h2>
+  <p>L'accès à l'application est restreint aux comptes Google autorisés de Media One Group. Toute tentative de connexion avec un compte non autorisé affiche un message d'erreur.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Première connexion</div>
+        <div class="step-desc">Cliquer sur « Se connecter avec Google » et suivre les deux étapes : identification du compte, puis autorisation d'accès aux Google Sheets.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Reconnexion automatique</div>
+        <div class="step-desc">Lors des visites suivantes, la connexion est rétablie silencieusement sans intervention — le compte est mémorisé en local.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Déconnexion</div>
+        <div class="step-desc">Cliquer sur « Déconnexion » en haut à droite. La prochaine visite nécessitera une reconnexion manuelle.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>Accès</strong>
+    L'application est hébergée sur GitHub Pages et accessible depuis n'importe quel navigateur moderne. Aucune installation requise.
+  </div>
+
+  <!-- INTERFACE -->
+  <h2 id="interface">Interface générale</h2>
+  <p>L'interface se compose de quatre zones principales :</p>
+  <ul>
+    <li><strong>En-tête</strong> — navigation vers les Google Sheets sources, bouton Actualiser, nom de l'utilisateur connecté, bouton Admin (réservé).</li>
+    <li><strong>Barre d'onglets</strong> — sélection de l'antenne ou vue globale.</li>
+    <li><strong>Barre de recherche</strong> — recherche en temps réel et badge d'envois possibles.</li>
+    <li><strong>Tableau principal</strong> — liste des gagnants avec toutes les actions disponibles.</li>
+  </ul>
+
+  <p>Le bouton <strong>Actualiser</strong> recharge les données depuis les trois Google Sheets et rafraîchit l'affichage. À utiliser après toute modification externe dans les Sheets.</p>
+
+  <!-- ONGLETS -->
+  <h2 id="onglets">Onglets & antennes</h2>
+  <p>Les données sont réparties sur trois Google Sheets, chacun correspondant à un groupe d'antennes :</p>
+
+  <table class="doc-table">
+    <thead><tr><th>Onglet</th><th>Antennes</th><th>Badges</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>One FM & Radio Lac</strong></td>
+        <td>One FM, Radio Lac</td>
+        <td><span class="badge badge-one">One FM</span> <span class="badge badge-lac">Radio Lac</span></td>
+      </tr>
+      <tr>
+        <td><strong>Carac & MOC</strong></td>
+        <td>Carac, MOC</td>
+        <td><span class="badge badge-moc">MOC</span></td>
+      </tr>
+      <tr>
+        <td><strong>LFM & Rouge</strong></td>
+        <td>LFM, Rouge</td>
+        <td><span class="badge badge-lfm">LFM</span> <span class="badge badge-rouge">Rouge</span></td>
+      </tr>
+      <tr>
+        <td><strong>Tous</strong></td>
+        <td>Toutes les antennes réunies</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-info">
+    <strong>Liens directs</strong>
+    Les badges ONE-LAC, MOC et LFM-ROUGE en haut à droite ouvrent directement le Google Sheet correspondant dans un nouvel onglet.
+  </div>
+
+  <!-- STATUTS -->
+  <h2 id="statuts">Statuts</h2>
+  <p>Chaque gagnant possède un statut qui reflète l'avancement de la distribution. Il est modifiable directement depuis le tableau via le menu déroulant de la colonne Statut.</p>
+
+  <table class="doc-table">
+    <thead><tr><th>Statut</th><th>Signification</th><th>Conditions</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="status s-attente">En attente</span></td>
+        <td>Aucun contact établi</td>
+        <td>Statut par défaut. Verrouillé si Nom, Tél et Email sont vides.</td>
+      </tr>
+      <tr>
+        <td><span class="status s-contact">Contact fait</span></td>
+        <td>Le mail d'information a été envoyé</td>
+        <td>Passé automatiquement après un envoi via le bouton Envoyer.</td>
+      </tr>
+      <tr>
+        <td><span class="status s-repondu">A répondu</span></td>
+        <td>Le gagnant a transmis ses informations Paléo Tickets</td>
+        <td>Passé automatiquement après enregistrement des données Paléo Tickets.</td>
+      </tr>
+      <tr>
+        <td><span class="status s-billets">Billets expédiés</span></td>
+        <td>Les billets ont été transmis sur l'app Paléo Tickets</td>
+        <td>À passer manuellement une fois les billets envoyés.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-tip">
+    <strong>Transitions automatiques</strong>
+    Deux transitions se font sans action manuelle : <em>En attente → Contact fait</em> lors d'un envoi mail via Make, et <em>En attente / Contact fait → A répondu</em> lors de l'enregistrement des données Paléo Tickets.
+  </div>
+
+  <!-- ACTIONS -->
+  <h2 id="actions">Actions sur une ligne</h2>
+
+  <h3>Modifier les informations gagnant</h3>
+  <p>Cliquer sur l'icône crayon à côté du nom ou du jeu pour ouvrir la modale de modification. Permet de renseigner ou corriger : Nom & Prénom, Téléphone, Email, et Jeu/Origine. Ces données sont écrites directement dans le Google Sheet.</p>
+
+  <h3>Copier l'email</h3>
+  <p>L'icône de copie à droite de l'adresse email copie celle-ci dans le presse-papier. Un toast de confirmation apparaît en bas à droite.</p>
+
+  <h3>Copier le modèle de mail</h3>
+  <p>Le bouton <strong>Mail</strong> en fin de ligne copie le modèle de mail complet (format HTML + texte brut) dans le presse-papier. Le contenu est adapté automatiquement selon l'antenne (tutoiement pour One FM et Rouge, vouvoiement pour Radio Lac et LFM) et la date de la soirée.</p>
+
+  <h3>Envoyer le mail via Make</h3>
+  <p>Le bouton vert <strong>Envoyer</strong> est visible uniquement quand toutes ces conditions sont réunies :</p>
+  <ul>
+    <li>Antenne ≠ Carac/MOC</li>
+    <li>Statut = <span class="status s-attente">En attente</span></li>
+    <li>Nom, Téléphone et Email tous renseignés</li>
+    <li>L'envoi est activé pour cette antenne (paramètre admin)</li>
+  </ul>
+  <p>Un clic déclenche le webhook Make, qui envoie le mail depuis Gmail. Si l'envoi est confirmé par Make (réponse 200), le statut passe automatiquement à <span class="status s-contact">Contact fait</span> dans le Sheet.</p>
+
+  <!-- PALÉO TICKETS -->
+  <h2 id="paleo-tickets">Données Paléo Tickets</h2>
+  <p>La colonne <strong>Paléo Tickets</strong> affiche les données nécessaires au transfert des billets sur l'application Paléo Tickets : Nom, Prénom et Email du compte destinataire.</p>
+
+  <p>Cliquer sur l'icône de la colonne Paléo Tickets ouvre la modale de saisie. Selon la configuration (1 ou 2 billets), il est possible de :</p>
+  <ul>
+    <li>Renseigner un seul compte (les deux billets sur le même compte)</li>
+    <li>Activer le split : renseigner deux comptes différents (1 billet par compte)</li>
+  </ul>
+
+  <div class="callout callout-tip">
+    <strong>Transition automatique</strong>
+    Après enregistrement des données Paléo Tickets, le statut passe automatiquement à <span class="status s-repondu">A répondu</span> — sauf s'il est déjà à <span class="status s-billets">Billets expédiés</span>.
+  </div>
+
+  <!-- ENVOI MAIL -->
+  <h2 id="envoi-mail">Envoi de mail</h2>
+
+  <h3>Contenu du mail</h3>
+  <p>Le mail est généré automatiquement selon l'antenne et la date de la soirée. Il contient :</p>
+  <ul>
+    <li>Salutation personnalisée avec le prénom du gagnant</li>
+    <li>Date de la soirée formatée</li>
+    <li>Liens vers l'application Paléo Tickets (Android & iOS)</li>
+    <li>Instructions pour transmettre les informations de compte</li>
+    <li>Signature spécifique à l'antenne</li>
+  </ul>
+
+  <h3>Sujet du mail par antenne</h3>
+  <table class="doc-table">
+    <thead><tr><th>Antenne</th><th>Sujet</th><th>Registre</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-one">One FM</span></td><td>Tes billets Paléo offerts par One FM</td><td>Tutoiement</td></tr>
+      <tr><td><span class="badge badge-lac">Radio Lac</span></td><td>Vos billets Paléo offerts par Radio Lac</td><td>Vouvoiement</td></tr>
+      <tr><td><span class="badge badge-rouge">Rouge</span></td><td>Tes billets Paléo offerts par Rouge</td><td>Tutoiement</td></tr>
+      <tr><td><span class="badge badge-lfm">LFM</span></td><td>Vos billets Paléo offerts par LFM</td><td>Vouvoiement</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn">
+    <strong>Carac & MOC</strong>
+    L'envoi de mail via Make n'est pas disponible pour l'onglet Carac & MOC. Utiliser le bouton Mail (copie manuelle) pour ces antennes.
+  </div>
+
+  <!-- RECHERCHE -->
+  <h2 id="recherche">Recherche & filtres</h2>
+
+  <h3>Recherche</h3>
+  <p>La barre de recherche en haut filtre en temps réel sur Nom, Prénom et Email dans tous les onglets. Les résultats sont surlignés en jaune. Les flèches de navigation permettent de passer d'un résultat au suivant.</p>
+
+  <h3>Filtres par statut</h3>
+  <p>Dans l'onglet <strong>Tous</strong>, des boutons filtres permettent d'afficher uniquement les gagnants d'un statut donné : En attente, Contact fait, A répondu, Billets expédiés.</p>
+
+  <h3>Badge "envois possibles"</h3>
+  <p>Le badge orange affiché à côté de la barre de recherche indique le nombre total de gagnants avec le statut <span class="status s-attente">En attente</span> et toutes les données renseignées (prêts à être contactés). Un clic sur ce badge bascule vers l'onglet Tous filtré sur « A répondu ». Un second clic retire le filtre.</p>
+
+  <!-- ADMIN -->
+  <h2 id="admin">Modale admin</h2>
+  <p>La modale Admin est accessible uniquement au compte administrateur via le bouton <strong>Admin</strong> dans l'en-tête.</p>
+
+  <h3>Activation de l'envoi de mail</h3>
+  <p>Deux toggles permettent d'activer ou désactiver l'envoi de mail via Make pour chaque groupe d'antennes :</p>
+  <ul>
+    <li><strong>One FM & Radio Lac</strong></li>
+    <li><strong>LFM & Rouge</strong></li>
+  </ul>
+  <p>L'état est stocké dans le Google Sheet (feuille <code>ConfigHTML</code>) et s'applique à tous les utilisateurs connectés. Désactiver masque le bouton Envoyer sur toutes les lignes concernées.</p>
+
+  <h3>Journal des connexions</h3>
+  <p>Les 50 dernières connexions sont affichées avec l'email et la date/heure. Ce journal est stocké localement sur l'appareil de l'administrateur (localStorage) — il n'est pas partagé.</p>
+
+  <!-- MAKE -->
+  <h2 id="make">Scénario Make</h2>
+  <p>Le scénario Make <strong>OA Paléo Mailing</strong> reçoit les données de l'application via un webhook et envoie le mail depuis Gmail selon l'antenne concernée.</p>
+
+  <h3>Flux</h3>
+  <div class="flow">
+    <div class="flow-step">Bouton Envoyer</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Webhook Make</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Router par antenne</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Gmail (envoi)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Webhook Response 200</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Statut → Contact fait</div>
+  </div>
+
+  <h3>Données envoyées au webhook</h3>
+  <table class="doc-table">
+    <thead><tr><th>Champ</th><th>Contenu</th></tr></thead>
+    <tbody>
+      <tr><td><code>antenne</code></td><td>Nom de l'antenne (One FM, Radio Lac, Rouge, LFM)</td></tr>
+      <tr><td><code>email</code></td><td>Adresse email du gagnant</td></tr>
+      <tr><td><code>nom</code></td><td>Nom et prénom du gagnant</td></tr>
+      <tr><td><code>concours</code></td><td>Nom du jeu/concours</td></tr>
+      <tr><td><code>sujet</code></td><td>Sujet du mail (généré automatiquement)</td></tr>
+      <tr><td><code>mailHTML</code></td><td>Corps du mail en HTML — à utiliser dans le module Gmail</td></tr>
+      <tr><td><code>mailPlain</code></td><td>Corps du mail en texte brut (fallback)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-tip">
+    <strong>Configuration Make</strong>
+    Dans chaque branche du router, configurer le filtre sur <code>{{1.antenne}}</code> et le module Gmail avec : <code>To = {{1.email}}</code>, <code>Subject = {{1.sujet}}</code>, <code>Content = {{1.mailHTML}}</code>. Ajouter un module Webhook Response avec Status 200 à la fin de chaque branche.
+  </div>
+
+  <!-- ARCHITECTURE -->
+  <h2 id="architecture">Architecture</h2>
+  <p>L'application est entièrement côté client — aucun serveur backend. Elle s'appuie sur :</p>
+  <ul>
+    <li><strong>Google Sheets API v4</strong> — lecture et écriture des données via OAuth 2.0</li>
+    <li><strong>Google Identity Services</strong> — authentification et autorisation</li>
+    <li><strong>Make (webhook)</strong> — envoi des mails via Gmail</li>
+    <li><strong>GitHub Pages</strong> — hébergement statique</li>
+  </ul>
+
+  <h3>Authentification</h3>
+  <p>L'application utilise deux flux Google distincts :</p>
+  <ul>
+    <li><strong>Google Sign-In</strong> — identification de l'utilisateur (JWT)</li>
+    <li><strong>OAuth 2.0 Token</strong> — autorisation d'accès en lecture/écriture aux Sheets</li>
+  </ul>
+  <p>Après la première connexion, le compte est mémorisé en <code>localStorage</code> et le token OAuth est redemandé silencieusement à chaque visite.</p>
+
+  <!-- FICHIERS -->
+  <h2 id="fichiers">Fichiers</h2>
+  <table class="doc-table">
+    <thead><tr><th>Fichier</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>index.html</code></td>
+        <td>Application principale — interface, logique, rendu des tableaux</td>
+      </tr>
+      <tr>
+        <td><code>config.js</code></td>
+        <td>Configuration — identifiants Google, liste des utilisateurs autorisés, IDs des Sheets, URL du webhook Make</td>
+      </tr>
+      <tr>
+        <td><code>documentation.html</code></td>
+        <td>Ce document</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn">
+    <strong>config.js</strong>
+    Ce fichier contient les identifiants techniques de l'application. Ne pas partager son contenu en dehors de l'équipe technique. Les deux fichiers doivent être déployés ensemble sur GitHub Pages.
+  </div>
+
+  <!-- SHEETS -->
+  <h2 id="sheets">Structure des Google Sheets</h2>
+  <p>Chaque feuille de distribution suit la même structure de colonnes :</p>
+
+  <table class="doc-table">
+    <thead><tr><th>Colonne</th><th>Contenu</th></tr></thead>
+    <tbody>
+      <tr><td><code>A</code></td><td>Antenne (O, Lac, Rouge, LFM, MOC…)</td></tr>
+      <tr><td><code>B</code></td><td>Date de la soirée</td></tr>
+      <tr><td><code>C</code></td><td>Numéro de billet</td></tr>
+      <tr><td><code>D</code></td><td>Jeu / Origine du concours</td></tr>
+      <tr><td><code>E</code></td><td>Statut</td></tr>
+      <tr><td><code>F</code></td><td>Nom et Prénom du gagnant</td></tr>
+      <tr><td><code>G</code></td><td>Téléphone</td></tr>
+      <tr><td><code>H</code></td><td>Email</td></tr>
+      <tr><td><code>I</code></td><td>Nom (compte Paléo Tickets)</td></tr>
+      <tr><td><code>J</code></td><td>Prénom (compte Paléo Tickets)</td></tr>
+      <tr><td><code>K</code></td><td>Email (compte Paléo Tickets)</td></tr>
+    </tbody>
+  </table>
+
+  <p>Les billets par paires partagent la même antenne sur deux lignes consécutives (la seconde ligne n'a pas de valeur en colonne A). L'application les regroupe automatiquement.</p>
+
+  <h3>Feuille ConfigHTML</h3>
+  <p>Présente dans le Google Sheet ONE & LAC, cette feuille stocke l'état des toggles d'envoi de mail :</p>
+  <table class="doc-table">
+    <thead><tr><th>Cellule</th><th>Valeur</th><th>Signification</th></tr></thead>
+    <tbody>
+      <tr><td><code>A1</code></td><td><code>1</code> ou <code>0</code></td><td>Envoi activé/désactivé pour One FM & Radio Lac</td></tr>
+      <tr><td><code>A2</code></td><td><code>1</code> ou <code>0</code></td><td>Envoi activé/désactivé pour LFM & Rouge</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+  <p style="font-size:11px;color:var(--text-faint);text-align:center;padding-bottom:2rem">Paléo Tickets 2026 — Media One Group · Documentation interne</p>
+
+</content>
+</div>
+
+<script>
+// Active nav link on scroll
+const sections=document.querySelectorAll('h2[id]');
+const navLinks=document.querySelectorAll('nav a[href^="#"]');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{if(s.getBoundingClientRect().top<=80)current=s.id;});
+  navLinks.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+current);});
+},{ passive:true });
+navLinks.forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const target=document.querySelector(a.getAttribute('href'));
+    if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+</script>
+</body>
+</html>
