@@ -154,6 +154,12 @@ tr:hover .btn-edit-inline{opacity:1}
 .send-badge.active{background:#f3eeff;color:#5b33b0;border-color:#c4a8f5}
 .send-badge svg{width:13px;height:13px}
 tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
+tr.slot-libre td{background:repeating-linear-gradient(135deg,var(--bg) 0px,var(--bg) 6px,#eeece6 6px,#eeece6 8px);}
+.ant-libre{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap;border:1px dashed var(--text-faint);color:var(--text-faint);background:transparent}
+.btn-attribuer{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;font-size:11px;font-weight:600;border-radius:20px;border:1.5px dashed #e0307a;background:transparent;color:#e0307a;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
+.btn-attribuer:hover{background:#fceef1;color:#c01060}
+.btn-attribuer svg{width:11px;height:11px}
+.filter-btn.f-libre.active{background:#fceef1;color:#e0307a;border-color:#f0a8c8}
 #toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--text);color:var(--surface);padding:8px 14px;border-radius:var(--r);font-size:12px;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999}
 #toast.show{opacity:1}
 .loading{text-align:center;padding:3rem;color:var(--text-faint);font-size:12px}
@@ -426,9 +432,12 @@ function renderPanel(idx){
   const rows=(sheetData[idx]||[]).slice(1);
   const groups=buildGroups(rows);
 
-  let total=0,contact=0,repondu=0,billets=0;
+  let total=0,contact=0,repondu=0,billets=0,libres=0;
   groups.forEach(g=>{
-    if(!(g.main[0]||'').trim())return;
+    const ant=(g.main[0]||'').trim();
+    if(!ant) return;
+    const nom=(g.main[5]||'').trim();
+    if(!nom){libres++;return;}
     total++;
     const st=(g.main[4]||'').toLowerCase();
     if(st.includes('contact'))contact++;
@@ -450,6 +459,7 @@ function renderPanel(idx){
     <button class="filter-btn f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',${idx})">Contact fait</button>
     <button class="filter-btn f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',${idx})">A répondu</button>
     <button class="filter-btn f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',${idx})">Billets expédiés</button>
+    <button class="filter-btn f-libre ${activeFilters.has('libre')?'active':''}" onclick="setFilter('libre',${idx})">Billets libres${libres>0?` (${libres})`:''}</button>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
@@ -458,11 +468,26 @@ function renderPanel(idx){
     <th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
 
-  const filteredGroups = activeFilters.size>0 ? groups.filter(g=>{
-    if(!(g.main[0]||'').trim()) return true; // keep empty rows
+  const filteredGroups = groups.filter(g=>{
+    const ant=(g.main[0]||'').trim();
+    const nom=(g.main[5]||'').trim();
+    const isSlot=!!(ant||/^\d+$/.test(ant))&&!nom; // has antenna, no name
+    const isSlotLibre=ant&&!nom;
     const st=(g.main[4]||'').toLowerCase();
-    return matchesFilters(st);
-  }) : groups;
+    if(activeFilters.size===0) return true;
+    return matchesFilters(st, isSlotLibre);
+  });
+
+  // Stock par antenne
+  const antStockMap={}; // {ak: {total,libre}}
+  groups.forEach(g=>{
+    const ant=(g.main[0]||'').trim();
+    if(!ant) return;
+    const ak=antKey(ant);
+    if(!antStockMap[ak]) antStockMap[ak]={total:0,libre:0,label:antLabel(ant)};
+    antStockMap[ak].total++;
+    if(!(g.main[5]||'').trim()) antStockMap[ak].libre++;
+  });
 
   let lastDate='';
   filteredGroups.forEach(g=>{
@@ -479,18 +504,38 @@ function renderPanel(idx){
     const pNom1=r[8]||'',pPre1=r[9]||'',pMail1=r[10]||'';
     const re=g.extra||[];
     const pNom2=re[8]||'',pPre2=re[9]||'',pMail2=re[10]||'';
+    const isSlotLibre=ant&&!nom;
     const isEmpty=!ant&&!nom;
     const sp=g.span;
     const mIdx=g.mainIdx;
     const sc=sClass(statut);
-    const rowCls=isEmpty?' class="empty-row"':'';
+
+    if(isEmpty) return; // skip truly empty rows
+
     if(ant && date && date!==lastDate && lastDate!==''){
       html+=`<tr><td colspan="10" style="padding:3px 0;background:var(--bg);border-bottom:0.5px solid var(--border)"></td></tr>`;
     }
     if(ant && date) lastDate=date;
 
-    const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    if(isSlotLibre){
+      html+=`<tr class="slot-libre" data-row="${mIdx}">
+        <td rowspan="${sp}" style="vertical-align:middle"><span class="ant-libre">${antLabel(ant)}</span></td>
+        <td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-faint);font-size:11px">${fmtDate(date)}</td>
+        <td style="text-align:center;color:var(--text-faint)">${esc(bNo)}</td>
+        <td colspan="6" style="vertical-align:middle" rowspan="${sp}">
+          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Attribuer un gagnant
+          </button>
+        </td>
+      </tr>`;
+      if(g.extra){
+        html+=`<tr class="slot-libre"><td style="text-align:center;color:var(--text-faint)">${esc(g.extra[2]||'')}</td></tr>`;
+      }
+      return;
+    }
 
+    const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     const antCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<span class="ant-badge ant-${ak}">${antLabel(ant)}</span>`:''}</td>`;
     const dateCell=`<td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-muted);font-size:11px">${fmtDate(date)}</td>`;
     const jeuCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:120px">
@@ -510,7 +555,7 @@ function renderPanel(idx){
     const sendIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
     const canSend=isSendEnabled(idx)&&idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
     const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIcon}</button>`:''}${canSend?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}','${jsEsc(date)}')" title="Envoyer le mail Paléo">${sendIcon} Envoyer</button>`:''}</div></td>`;
-        const hasInfo=!!(nom||tel||email);
+    const hasInfo=!!(nom||tel||email);
     const isLocked=!hasInfo&&(!statut||statut==='en attente');
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${isLocked?'s-locked':sc}" ${isLocked?'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"':''} onchange="updateStatus(this,${idx},${mIdx})">
       <option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option>
@@ -521,11 +566,9 @@ function renderPanel(idx){
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail
     </button>`:''}</td>`;
-
     const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
     const drAttr=ant?` data-row="${mIdx}"`:'';
-    html+=`<tr${rowCls}${drAttr}>${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
-
+    html+=`<tr${drAttr}>${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
     if(g.extra){
       const bNo2=g.extra[2]||'';
       const paleoCell2=buildPaleoCell(idx,g.extraIdx,bNo2,pNom2,pPre2,pMail2,ant);
@@ -534,9 +577,35 @@ function renderPanel(idx){
   });
 
   html+='</tbody></table></div></div>';
+
+  // Stock pills par antenne
+  const antOrder=['O','Lac','Rouge','LFM','MOC'];
+  const antColors={O:'var(--one-bg),var(--one),var(--one-bd)',Lac:'var(--lac-bg),var(--lac),var(--lac-bd)',Rouge:'var(--rouge-bg),var(--rouge),var(--rouge-bd)',LFM:'var(--lfm-bg),var(--lfm),var(--lfm-bd)',MOC:'var(--moc-bg),var(--moc),var(--moc-bd)'};
+  let stockHtml='';
+  antOrder.forEach(ak=>{
+    const s=antStockMap[ak];
+    if(!s) return;
+    const [bg,fg,bd]=antColors[ak].split(',');
+    stockHtml+=`<div class="stat-pill" style="background:${bg};color:${fg};border-color:${bd};cursor:pointer" onclick="setFilter('libre',${idx})" title="Filtrer billets libres ${s.label}">
+      <strong>${s.libre}</strong> libre${s.libre!==1?'s':''} / ${s.total} · ${s.label}
+    </div>`;
+  });
+
+  // Inject stock pills into stats bar
+  html=html.replace('<div class="stats-bar">',`<div class="stats-bar">`);
+  // Insert before closing stats-bar div
+  const statsClose='</div>\n  <div class="filter-bar">';
+
   panel.innerHTML=html;
+  // Insert stock pills after stats bar
+  const statsBar=panel.querySelector('.stats-bar');
+  if(statsBar&&stockHtml){
+    const div=document.createElement('div');
+    div.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.5rem';
+    div.innerHTML=stockHtml;
+    statsBar.after(div);
+  }
   updateSendBadge();
-  if(activeFilters.size>0) document.getElementById('panel-'+s.panel).querySelectorAll('tr.empty-row').forEach(r=>r.style.display='none');
 }
 
 function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,pMail2){
@@ -805,13 +874,14 @@ function clearSearch(){
   document.getElementById('search-nav').classList.remove('visible');
 }
 
-function matchesFilters(st){
+function matchesFilters(st, isSlotLibre){
   if(activeFilters.size===0) return true;
   for(const f of activeFilters){
-    if(f==='attente' && (!st||st==='en attente')) return true;
-    if(f==='contact' && st.includes('contact')) return true;
-    if(f==='repondu' && (st.includes('répondu')||st.includes('repondu'))) return true;
-    if(f==='billets' && (st.includes('expédié')||st.includes('expedie')||st.includes('billet'))) return true;
+    if(f==='libre' && isSlotLibre) return true;
+    if(f==='attente' && !isSlotLibre && (!st||st==='en attente')) return true;
+    if(f==='contact' && !isSlotLibre && st.includes('contact')) return true;
+    if(f==='repondu' && !isSlotLibre && (st.includes('répondu')||st.includes('repondu'))) return true;
+    if(f==='billets' && !isSlotLibre && (st.includes('expédié')||st.includes('expedie')||st.includes('billet'))) return true;
   }
   return false;
 }
@@ -840,7 +910,7 @@ function renderAllPanel(){
     });
   }
 
-  // Sort by date — extract day number from col B
+  // Sort by date
   allGroups.sort((a,b)=>{
     const da=parseInt((a.main[1]||'').match(/\d+/)?.[0]||99);
     const db=parseInt((b.main[1]||'').match(/\d+/)?.[0]||99);
@@ -850,15 +920,20 @@ function renderAllPanel(){
   // Filter
   if(activeFilters.size>0){
     allGroups=allGroups.filter(g=>{
+      const nom=(g.main[5]||'').trim();
+      const ant=(g.main[0]||'').trim();
+      const isSlotLibre=ant&&!nom;
       const st=(g.main[4]||'').toLowerCase();
-      return matchesFilters(st);
+      return matchesFilters(st, isSlotLibre);
     });
   }
 
-  let total=allGroups.length;
-  let contact=allGroups.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('contact');}).length;
-  let repondu=allGroups.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('répondu')||st.includes('repondu');}).length;
-  let billets=allGroups.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('expédié')||st.includes('expedie')||st.includes('billet');}).length;
+  const libresAll=allGroups.filter(g=>!(g.main[5]||'').trim()).length;
+  const gagnants=allGroups.filter(g=>(g.main[5]||'').trim());
+  let total=gagnants.length;
+  let contact=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('contact');}).length;
+  let repondu=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('répondu')||st.includes('repondu');}).length;
+  let billets=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('expédié')||st.includes('expedie')||st.includes('billet');}).length;
   let attenteN=total-contact-repondu-billets;
 
   let html=`<div class="stats-bar">
@@ -875,6 +950,7 @@ function renderAllPanel(){
     <button class="filter-btn f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',3)">Contact fait</button>
     <button class="filter-btn f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',3)">A répondu</button>
     <button class="filter-btn f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',3)">Billets expédiés</button>
+    <button class="filter-btn f-libre ${activeFilters.has('libre')?'active':''}" onclick="setFilter('libre',3)">Billets libres${libresAll>0?` (${libresAll})`:''}</button>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
@@ -899,9 +975,34 @@ function renderAllPanel(){
     const pNom1=r[8]||'',pPre1=r[9]||'',pMail1=r[10]||'';
     const re=g.extra||[];
     const pNom2=re[8]||'',pPre2=re[9]||'',pMail2=re[10]||'';
+    const isSlotLibre=ant&&!nom;
     const sp=g.span;
     const mIdx=g.mainIdx;
     const sc=sClass(statut);
+
+    if(date && date!==lastDateAll && lastDateAll!==''){
+      html+=`<tr><td colspan="10" style="padding:3px 0;background:var(--bg);border-bottom:0.5px solid var(--border)"></td></tr>`;
+    }
+    if(date) lastDateAll=date;
+
+    if(isSlotLibre){
+      html+=`<tr class="slot-libre" data-row="${mIdx}">
+        <td rowspan="${sp}" style="vertical-align:middle"><span class="ant-libre">${antLabel(ant)}</span></td>
+        <td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-faint);font-size:11px">${fmtDate(date)}</td>
+        <td style="text-align:center;color:var(--text-faint)">${esc(bNo)}</td>
+        <td colspan="6" style="vertical-align:middle" rowspan="${sp}">
+          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Attribuer un gagnant
+          </button>
+        </td>
+      </tr>`;
+      if(g.extra){
+        html+=`<tr class="slot-libre"><td style="text-align:center;color:var(--text-faint)">${esc(g.extra[2]||'')}</td></tr>`;
+      }
+      return;
+    }
+
     const editIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     const antCell=`<td rowspan="${sp}" style="vertical-align:middle"><span class="ant-badge ant-${ak}">${antLabel(ant)}</span></td>`;
     const dateCell=`<td rowspan="${sp}" style="vertical-align:middle;white-space:nowrap;color:var(--text-muted);font-size:11px">${fmtDate(date)}</td>`;
@@ -915,10 +1016,6 @@ function renderAllPanel(){
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${(!!(nom||tel||email))||statut!=='en attente'?sc:'s-locked'}" ${(!!(nom||tel||email))||statut!=='en attente'?'':'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"'} onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
     const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
-    if(date && date!==lastDateAll && lastDateAll!==''){
-      html+=`<tr><td colspan="10" style="padding:3px 0;background:var(--bg);border-bottom:0.5px solid var(--border)"></td></tr>`;
-    }
-    if(date) lastDateAll=date;
     html+=`<tr data-row="${mIdx}">${antCell}${dateCell}<td style="text-align:center;color:var(--text-muted)">${esc(bNo)}</td>${jeuCell}${winnerCell}${telCell}${emailCell}${statusCell}${paleoCell1}${mailCell}</tr>`;
     if(g.extra){
       const bNo2=g.extra[2]||'';
