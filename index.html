@@ -929,19 +929,19 @@ function copyEmail(btn,email){if(!email)return;navigator.clipboard.writeText(ema
 
 /* SEND MAIL VIA MAKE */
 function getMailSubject(ak){
-  const vousTu={'one':'tu','lac':'vous','rouge':'tu','lfm':'vous','moc':'tu'};
-  const labels={'one':'One FM','lac':'Radio Lac','rouge':'Rouge','lfm':'LFM','moc':'MOC'};
+  const vousTu={'O':'tu','Lac':'vous','Rouge':'tu','LFM':'vous'};
+  const labels={'O':'One FM','Lac':'Radio Lac','Rouge':'Rouge','LFM':'LFM'};
   const antName=labels[ak]||ak;
-  return vousTu[ak]==='tu'
-    ? `Tes billets Paléo offerts par ${antName}`
-    : `Vos billets Paléo offerts par ${antName}`;
+  return vousTu[ak]==='vous'
+    ? `Vos billets Paléo offerts par ${antName}`
+    : `Tes billets Paléo offerts par ${antName}`;
 }
 async function sendMail(btn,idx,rowIdx,ak,nom,concours,email){
   if(btn.classList.contains('sending')||btn.classList.contains('sent')) return;
   btn.classList.add('sending');
   btn.textContent='Envoi…';
   const sujet=getMailSubject(ak);
-  const antLabels={'one':'One FM','lac':'Radio Lac','rouge':'Rouge','lfm':'LFM','moc':'MOC'};
+  const antLabels={'O':'One FM','Lac':'Radio Lac','Rouge':'Rouge','LFM':'LFM'};
   try{
     const resp=await fetch(WEBHOOK_URL,{
       method:'POST',
