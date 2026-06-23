@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Paléo Tickets 2026 — Media One Group</title>
+<script src="config.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{
@@ -34,7 +35,11 @@ header{background:var(--surface);border-bottom:0.5px solid var(--border);padding
 .header-right{display:flex;align-items:center;gap:10px}
 .user-chip{display:flex;align-items:center;gap:6px;background:var(--bg);border:0.5px solid var(--border);border-radius:20px;padding:3px 8px 3px 3px;font-size:11px;color:var(--text-muted)}
 .user-avatar{width:20px;height:20px;border-radius:50%;background:var(--text);color:var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600}
-.btn-logout{font-size:11px;color:var(--text-muted);background:transparent;border:none;cursor:pointer;padding:3px 6px}
+.btn-send-mail{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#fff;background:#2d7a4f;border:none;border-radius:var(--r);padding:3px 8px;cursor:pointer;transition:background .15s}
+.btn-send-mail:hover{background:#1f5c39}
+.btn-send-mail.sending{opacity:.6;cursor:wait}
+.btn-send-mail.sent{background:#888;cursor:default}
+.btn-send-mail svg{width:12px;height:12px}
 .btn-logout:hover{color:var(--text)}
 .btn-admin{font-size:11px;color:var(--text-muted);background:transparent;border:0.5px solid var(--border);border-radius:var(--r);cursor:pointer;padding:3px 8px;display:flex;align-items:center;gap:4px;visibility:hidden}
 .btn-admin:hover{background:var(--bg);color:var(--text)}
@@ -277,14 +282,8 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070;}
 <div id="toast"></div>
 
 <script>
-const CLIENT_ID='254325008139-rp0p175m2icjv0pr6jv9vp52n9jjpdik.apps.googleusercontent.com';
-const API_KEY='AIzaSyBw5-W46qmpeWn79XKtiqE1CZuiXXkHWH8';
-const ALLOWED=['alex@mediaonegroup.ch','lionel@mediaonegroup.ch'];
-const SHEETS=[
-  {id:'15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c',name:'DISTRIBUTION ONE & LAC',panel:0},
-  {id:'116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8',name:'DISTRIBUTION Carac-MOC',panel:1},
-  {id:'1J8833aM0abL9iTD0-GGMGlnkPc5vkqHRDXpvkWR8jrk',name:'DISTRIBUTION LFM & ROUGE',panel:2}
-];
+const CLIENT_ID=window.CLIENT_ID;
+const API_KEY=window.API_KEY;
 
 // Mapping abrév → jour complet pour les dates du Paléo 2026
 const DAY_MAP={'mar':'Mardi','mer':'Mercredi','jeu':'Jeudi','ven':'Vendredi','sam':'Samedi','dim':'Dimanche','lun':'Lundi'};
@@ -493,7 +492,9 @@ function renderPanel(idx){
     </td>`;
     const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
     const copyIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIcon}</button>`:''}</div></td>`;
+    const sendIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
+    const canSend=idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
+    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIcon}</button>`:''}${canSend?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}')" title="Envoyer le mail Paléo">${sendIcon} Envoyer</button>`:''}</div></td>`;
         const hasInfo=!!(nom||tel||email);
     const isLocked=!hasInfo&&(!statut||statut==='en attente');
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle">${ant?`<select class="status-select ${isLocked?'s-locked':sc}" ${isLocked?'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"':''} onchange="updateStatus(this,${idx},${mIdx})">
@@ -893,7 +894,9 @@ function renderAllPanel(){
     const winnerCell=`<td rowspan="${sp}" style="vertical-align:middle;max-width:140px"><div class="inline-field"><div class="editable-val ${nom?'':'empty'}">${esc(nom)||'—'}</div><button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'${jsEsc(nom)}','${jsEsc(tel)}','${jsEsc(email)}','${jsEsc(jeu)}')" title="Modifier">${editIcon}</button></div></td>`;
     const telCell=`<td rowspan="${sp}" style="vertical-align:middle;color:var(--text-muted);font-size:11px;white-space:nowrap">${esc(tel)}</td>`;
     const copyIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIconAll}</button>`:''}</div></td>`;
+    const sendIconAll=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
+    const canSendAll=idx!==1&&(statut||'').toLowerCase()==='en attente'&&nom.trim()&&tel.trim()&&email.trim();
+    const emailCell=`<td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-muted)"><div class="inline-field">${esc(email)}${email?`<button class="btn-edit-inline" onclick="copyEmail(this,'${jsEsc(email)}')" title="Copier l'email">${copyIconAll}</button>`:''}${canSendAll?`<button class="btn-send-mail" onclick="sendMail(this,${idx},${mIdx},'${jsEsc(ak)}','${jsEsc(nom)}','${jsEsc(jeu)}','${jsEsc(email)}')" title="Envoyer le mail Paléo">${sendIconAll} Envoyer</button>`:''}</div></td>`;
     const statusCell=`<td rowspan="${sp}" style="vertical-align:middle"><select class="status-select ${(!!(nom||tel||email))||statut!=='en attente'?sc:'s-locked'}" ${(!!(nom||tel||email))||statut!=='en attente'?'':'disabled title="Renseignez d\'abord Nom, Téléphone ou Email"'} onchange="updateStatus(this,${idx},${mIdx})"><option value="en attente" ${(!statut||statut==='en attente')?'selected':''}>En attente</option><option value="contact fait" ${statut==='contact fait'?'selected':''}>Contact fait</option><option value="a répondu" ${statut==='a répondu'?'selected':''}>A répondu</option><option value="billets expédiés" ${statut==='billets expédiés'?'selected':''}>Billets expédiés</option></select></td>`;
     const mailCell=`<td rowspan="${sp}" style="vertical-align:middle"><button class="btn-copy-mail" onclick="copyMail(this,'${ak}','${jsEsc(date)}','${jsEsc(nom)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Mail</button></td>`;
     const paleoCell1=buildPaleoCell(idx,mIdx,bNo,pNom1,pPre1,pMail1,ant,g.extra?g.extraIdx:null,pNom2,pPre2,pMail2);
@@ -925,7 +928,43 @@ document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',fun
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function copyEmail(btn,email){if(!email)return;navigator.clipboard.writeText(email).then(()=>{btn.classList.add('copied');showToast('Email copié : '+email);setTimeout(()=>btn.classList.remove('copied'),2000);});}
 
-/* ADMIN */
+/* SEND MAIL VIA MAKE */
+function getMailSubject(ak){
+  const vousTu={'one':'tu','lac':'vous','rouge':'tu','lfm':'vous','moc':'tu'};
+  const labels={'one':'One FM','lac':'Radio Lac','rouge':'Rouge','lfm':'LFM','moc':'MOC'};
+  const antName=labels[ak]||ak;
+  return vousTu[ak]==='tu'
+    ? `Tes billets Paléo offerts par ${antName}`
+    : `Vos billets Paléo offerts par ${antName}`;
+}
+async function sendMail(btn,idx,rowIdx,ak,nom,concours,email){
+  if(btn.classList.contains('sending')||btn.classList.contains('sent')) return;
+  btn.classList.add('sending');
+  btn.textContent='Envoi…';
+  const sujet=getMailSubject(ak);
+  const antLabels={'one':'One FM','lac':'Radio Lac','rouge':'Rouge','lfm':'LFM','moc':'MOC'};
+  try{
+    const resp=await fetch(WEBHOOK_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({antenne:antLabels[ak]||ak,nom,concours,email,sujet})
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    // Mettre à jour Sheets → "contact fait"
+    await sheetWrite(SHEETS[idx].id,`E${rowIdx}`,[['contact fait']]);
+    // Mettre à jour sheetData local
+    if(sheetData[idx]&&sheetData[idx][rowIdx-1]) sheetData[idx][rowIdx-1][4]='contact fait';
+    btn.classList.remove('sending');
+    btn.classList.add('sent');
+    btn.textContent='✓ Envoyé';
+    showToast('Mail envoyé à '+email);
+    setTimeout(()=>{renderPanel(idx);if(document.getElementById('tab-all').classList.contains('active')) renderAllPanel();},1500);
+  }catch(e){
+    btn.classList.remove('sending');
+    btn.textContent='Envoyer';
+    showToast('Erreur d\'envoi : '+e.message);
+  }
+}
 function logConnection(email){
   const logs=JSON.parse(localStorage.getItem('paleo_logs')||'[]');
   logs.unshift({email,date:new Date().toISOString()});
