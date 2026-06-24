@@ -63,26 +63,41 @@ header{background:var(--grad);padding:0 1.25rem;display:flex;align-items:center;
 .tab-btn.active .tab-dot{background:#fff !important;opacity:.8}
 .tab-dot{width:7px;height:7px;border-radius:50%;transition:background .15s}
 
-/* SEARCH BAR */
-.search-bar{background:var(--surface);border-bottom:0.5px solid var(--border);padding:8px 1.25rem;display:flex;align-items:center;gap:10px}
-.search-input{flex:1;max-width:340px;font-size:12px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;outline:none;transition:border-color .15s}
-.search-input:focus{border-color:#e8307a;box-shadow:0 0 0 3px rgba(232,48,122,.1)}
-.search-nav{display:none;align-items:center;gap:6px;font-size:11px;color:var(--text-muted)}
-.search-nav.visible{display:flex}
-.search-count{font-weight:600;color:var(--text)}
-.btn-nav{width:22px;height:22px;border-radius:6px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
-.btn-nav:hover{background:var(--bg);color:var(--text)}
-.btn-nav svg{width:12px;height:12px}
-
 /* MAIN */
 main{padding:1.25rem}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
 /* STATS */
-.stats-bar{display:flex;gap:7px;margin-bottom:.75rem;flex-wrap:wrap}
+.stats-bar{display:flex;gap:7px;margin-bottom:.75rem;flex-wrap:wrap;align-items:center}
+.stats-bar-left{display:flex;gap:7px;flex-wrap:wrap;align-items:center;flex:1}
+.stats-bar-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;color:var(--text-muted);display:flex;align-items:center;gap:5px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .stat-pill strong{color:var(--text)}
+
+/* SEARCH INLINE */
+.search-inline{display:flex;align-items:center;gap:6px}
+.search-input{font-size:12px;padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;outline:none;transition:border-color .15s;width:190px}
+.search-input:focus{border-color:#e8307a;box-shadow:0 0 0 3px rgba(232,48,122,.1)}
+.search-nav{display:none;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)}
+.search-nav.visible{display:flex}
+.search-count{font-weight:600;color:var(--text);font-size:11px}
+.btn-nav{width:22px;height:22px;border-radius:6px;border:0.5px solid var(--border-strong);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.btn-nav:hover{background:var(--bg);color:var(--text)}
+.btn-nav svg{width:12px;height:12px}
+
+/* SORT DROPDOWN */
+.sort-wrap{position:relative}
+.btn-sort{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .15s;flex-shrink:0}
+.btn-sort:hover,.btn-sort.open{background:var(--bg);border-color:var(--border-strong);color:var(--text)}
+.btn-sort svg{width:15px;height:15px}
+.sort-dropdown{display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.12);min-width:180px;z-index:100;overflow:hidden}
+.sort-dropdown.open{display:block}
+.sort-dropdown-title{font-size:10px;font-weight:700;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;padding:10px 14px 6px}
+.sort-option{display:block;width:100%;text-align:left;padding:8px 14px;font-size:12px;font-weight:500;color:var(--text);background:transparent;border:none;cursor:pointer;font-family:inherit;transition:background .1s}
+.sort-option:hover{background:var(--bg)}
+.sort-option.active{color:#e8307a;font-weight:700}
+.sort-sep{height:0.5px;background:var(--border);margin:4px 0}
 
 /* FILTER BAR */
 .filter-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
@@ -284,16 +299,7 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070}
     </button>
   </div>
 
-  <div class="search-bar">
-    <input class="search-input" id="search-input" type="text" placeholder="Rechercher nom, prénom, email..." oninput="onSearch()" />
-    <div class="search-nav" id="search-nav">
-      <span id="search-count" class="search-count"></span>
-      <button class="btn-nav" onclick="navSearch(-1)" title="Précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="btn-nav" onclick="navSearch(1)" title="Suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <button class="btn-nav" onclick="clearSearch()" title="Effacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div id="send-badge-wrap"></div>
-  </div>
+  <div id="send-badge-wrap" style="display:none"></div>
 
   <main>
     <div class="tab-panel active" id="panel-0"></div>
@@ -528,11 +534,41 @@ function renderPanel(idx){
   });
 
   let html=`<div class="stats-bar">
-    <div class="stat-pill"><strong>${total}</strong> gagnants</div>
-    <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${total-contact-repondu-billets}</strong> en attente</div>
-    <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
-    <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
-    <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
+    <div class="stats-bar-left">
+      <div class="stat-pill"><strong>${total}</strong> gagnants</div>
+      <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${total-contact-repondu-billets}</strong> en attente</div>
+      <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
+      <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
+      <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
+    </div>
+    <div class="stats-bar-right">
+      <div id="send-badge-wrap-${idx}"></div>
+      <div class="sort-wrap">
+        <button class="btn-sort" id="sort-btn-${idx}" onclick="toggleSort(${idx})" title="Trier">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
+        </button>
+        <div class="sort-dropdown" id="sort-drop-${idx}">
+          <div class="sort-dropdown-title">Trier par</div>
+          <button class="sort-option ${activeFilters.size===0?'active':''}" onclick="setFilter('',${idx});closeSort(${idx})">Tous</button>
+          <div class="sort-sep"></div>
+          <button class="sort-option f-attente ${activeFilters.has('attente')?'active':''}" onclick="setFilter('attente',${idx});closeSort(${idx})">En attente</button>
+          <button class="sort-option f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',${idx});closeSort(${idx})">Contact fait</button>
+          <button class="sort-option f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',${idx});closeSort(${idx})">A répondu</button>
+          <button class="sort-option f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',${idx});closeSort(${idx})">Billets expédiés</button>
+          <div class="sort-sep"></div>
+          <button class="sort-option f-libre ${activeFilters.has('libre')?'active':''}" onclick="setFilter('libre',${idx});closeSort(${idx})">Billets libres</button>
+        </div>
+      </div>
+      <div class="search-inline">
+        <input class="search-input" id="search-input" type="text" placeholder="Rechercher…" oninput="onSearch()" />
+        <div class="search-nav" id="search-nav">
+          <span id="search-count" class="search-count"></span>
+          <button class="btn-nav" onclick="navSearch(-1)" title="Précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="btn-nav" onclick="navSearch(1)" title="Suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+          <button class="btn-nav" onclick="clearSearch()" title="Effacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="filter-bar">
     <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Filtrer :</span>
@@ -637,25 +673,7 @@ function renderPanel(idx){
 
   html+='</tbody></table></div></div>';
   panel.innerHTML=html;
-
-  // Stock pills
-  const antOrder=['O','Lac','Rouge','LFM','MOC'];
-  const antColors={O:'var(--one-bg),var(--one),var(--one-bd)',Lac:'var(--lac-bg),var(--lac),var(--lac-bd)',Rouge:'var(--rouge-bg),var(--rouge),var(--rouge-bd)',LFM:'var(--lfm-bg),var(--lfm),var(--lfm-bd)',MOC:'var(--moc-bg),var(--moc),var(--moc-bd)'};
-  let stockHtml='';
-  antOrder.forEach(ak=>{
-    const st=antStockMap[ak];
-    if(!st||st.libre===0) return;
-    const [bg,fg,bd]=antColors[ak].split(',');
-    stockHtml+=`<div class="stat-pill" style="background:${bg};color:${fg};border-color:${bd};cursor:pointer" onclick="setFilter('libre',${idx})"><strong>${st.libre}</strong> libre${st.libre!==1?'s':''} / ${st.total} · ${st.label}</div>`;
-  });
-  const statsBar=panel.querySelector('.stats-bar');
-  if(statsBar&&stockHtml){
-    const div=document.createElement('div');
-    div.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.5rem';
-    div.innerHTML=stockHtml;
-    statsBar.after(div);
-  }
-  updateSendBadge();
+  updateSendBadgePanel(idx);
 }
 
 function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,pMail2,sp){
@@ -849,7 +867,7 @@ function copyMail(btn,ak,dateRaw,nomRaw){
 
 /* UI */
 /* SEND BADGE */
-function updateSendBadge(){
+function updateSendBadgePanel(panelIdx){
   let count=0;
   for(let i=0;i<3;i++){
     const rows=(sheetData[i]||[]).slice(1);
@@ -859,7 +877,7 @@ function updateSendBadge(){
       if(st.includes('répondu')||st.includes('repondu')) count++;
     });
   }
-  const wrap=document.getElementById('send-badge-wrap');
+  const wrap=document.getElementById('send-badge-wrap-'+panelIdx);
   if(!wrap) return;
   if(count>0){
     const isActive=activeFilters.has('repondu');
@@ -867,6 +885,9 @@ function updateSendBadge(){
   } else {
     wrap.innerHTML='';
   }
+}
+function updateSendBadge(){
+  for(let i=0;i<4;i++) updateSendBadgePanel(i);
 }
 function toggleSendBadgeFilter(){
   if(activeFilters.has('repondu')){
@@ -877,8 +898,31 @@ function toggleSendBadgeFilter(){
     switchTab(3);
   }
   renderAllPanel();
-  updateSendBadge();
 }
+
+/* SORT */
+function toggleSort(idx){
+  const btn=document.getElementById('sort-btn-'+idx);
+  const drop=document.getElementById('sort-drop-'+idx);
+  if(!btn||!drop) return;
+  const isOpen=drop.classList.contains('open');
+  // close all
+  document.querySelectorAll('.sort-dropdown.open').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.btn-sort.open').forEach(b=>b.classList.remove('open'));
+  if(!isOpen){drop.classList.add('open');btn.classList.add('open');}
+}
+function closeSort(idx){
+  const btn=document.getElementById('sort-btn-'+idx);
+  const drop=document.getElementById('sort-drop-'+idx);
+  if(btn) btn.classList.remove('open');
+  if(drop) drop.classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.sort-wrap')){
+    document.querySelectorAll('.sort-dropdown.open').forEach(d=>d.classList.remove('open'));
+    document.querySelectorAll('.btn-sort.open').forEach(b=>b.classList.remove('open'));
+  }
+});
 
 /* SEARCH */
 let searchResults=[];
@@ -993,11 +1037,41 @@ function renderAllPanel(){
   const attenteN=total-contact-repondu-billets;
 
   let html=`<div class="stats-bar">
-    <div class="stat-pill"><strong>${total}</strong> gagnants</div>
-    <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${attenteN}</strong> en attente</div>
-    <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
-    <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
-    <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
+    <div class="stats-bar-left">
+      <div class="stat-pill"><strong>${total}</strong> gagnants</div>
+      <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${attenteN}</strong> en attente</div>
+      <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
+      <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
+      <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
+    </div>
+    <div class="stats-bar-right">
+      <div id="send-badge-wrap-3"></div>
+      <div class="sort-wrap">
+        <button class="btn-sort" id="sort-btn-3" onclick="toggleSort(3)" title="Trier">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
+        </button>
+        <div class="sort-dropdown" id="sort-drop-3">
+          <div class="sort-dropdown-title">Trier par</div>
+          <button class="sort-option ${activeFilters.size===0?'active':''}" onclick="setFilter('',3);closeSort(3)">Tous</button>
+          <div class="sort-sep"></div>
+          <button class="sort-option f-attente ${activeFilters.has('attente')?'active':''}" onclick="setFilter('attente',3);closeSort(3)">En attente</button>
+          <button class="sort-option f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',3);closeSort(3)">Contact fait</button>
+          <button class="sort-option f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',3);closeSort(3)">A répondu</button>
+          <button class="sort-option f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',3);closeSort(3)">Billets expédiés</button>
+          <div class="sort-sep"></div>
+          <button class="sort-option f-libre ${activeFilters.has('libre')?'active':''}" onclick="setFilter('libre',3);closeSort(3)">Billets libres</button>
+        </div>
+      </div>
+      <div class="search-inline">
+        <input class="search-input" id="search-input" type="text" placeholder="Rechercher…" oninput="onSearch()" />
+        <div class="search-nav" id="search-nav">
+          <span id="search-count" class="search-count"></span>
+          <button class="btn-nav" onclick="navSearch(-1)" title="Précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="btn-nav" onclick="navSearch(1)" title="Suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+          <button class="btn-nav" onclick="clearSearch()" title="Effacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="filter-bar">
     <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Filtrer :</span>
@@ -1094,9 +1168,8 @@ function renderAllPanel(){
 
   html+='</tbody></table></div></div>';
   panel.innerHTML=html;
-  updateSendBadge();
+  updateSendBadgePanel(3);
 }
-
 function switchTab(idx){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
