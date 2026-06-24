@@ -99,16 +99,14 @@ main{padding:1.25rem}
 .sort-option.active{color:#e8307a;font-weight:700}
 .sort-sep{height:0.5px;background:var(--border);margin:4px 0}
 
-/* FILTER BAR */
-.filter-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
-.filter-btn{padding:4px 13px;font-size:11px;font-weight:600;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.filter-btn:hover{border-color:var(--border-strong);color:var(--text)}
-.filter-btn.active{color:var(--text);background:var(--bg);border-color:var(--text)}
-.filter-btn.f-attente.active{background:#fff4e0;color:#b35f00;border-color:#f0c070}
-.filter-btn.f-contact.active{background:#f3eeff;color:#5b33b0;border-color:#c4a8f5}
-.filter-btn.f-repondu.active{background:#fff0f0;color:#b02020;border-color:#f5a8a8}
-.filter-btn.f-billets.active{background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8}
-.filter-btn.f-libre.active{background:#fceef1;color:#e0307a;border-color:#f0a8c8}
+/* FILTER BAR - supprimée */
+
+/* SORT DROPDOWN — checkbox style */
+.sort-option{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:7px 14px;font-size:12px;font-weight:500;color:var(--text);background:transparent;border:none;cursor:pointer;font-family:inherit;transition:background .1s}
+.sort-option:hover{background:var(--bg)}
+.sort-option input[type=checkbox]{width:14px;height:14px;accent-color:#e8307a;cursor:pointer;flex-shrink:0}
+.sort-reset{display:block;width:calc(100% - 28px);margin:8px 14px 4px;padding:5px 0;font-size:11px;font-weight:700;color:#e8307a;background:transparent;border:1px solid #f0b0c8;border-radius:8px;cursor:pointer;font-family:inherit;text-align:center;transition:background .1s}
+.sort-reset:hover{background:#fceef1}
 
 /* SEND BADGE */
 .send-badge{display:inline-flex;align-items:center;gap:5px;background:#fff4e0;color:#b35f00;border:1.5px solid #f0c070;border-radius:20px;padding:4px 13px;font-size:11px;font-weight:600;cursor:pointer;transition:background .15s}
@@ -544,19 +542,17 @@ function renderPanel(idx){
     <div class="stats-bar-right">
       <div id="send-badge-wrap-${idx}"></div>
       <div class="sort-wrap">
-        <button class="btn-sort" id="sort-btn-${idx}" onclick="toggleSort(${idx})" title="Trier">
+        <button class="btn-sort ${activeFilters.size>0?'open':''}" id="sort-btn-${idx}" onclick="toggleSort(${idx})" title="Filtrer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
         </button>
         <div class="sort-dropdown" id="sort-drop-${idx}">
-          <div class="sort-dropdown-title">Trier par</div>
-          <button class="sort-option ${activeFilters.size===0?'active':''}" onclick="setFilter('',${idx});closeSort(${idx})">Tous</button>
-          <div class="sort-sep"></div>
-          <button class="sort-option f-attente ${activeFilters.has('attente')?'active':''}" onclick="setFilter('attente',${idx});closeSort(${idx})">En attente</button>
-          <button class="sort-option f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',${idx});closeSort(${idx})">Contact fait</button>
-          <button class="sort-option f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',${idx});closeSort(${idx})">A répondu</button>
-          <button class="sort-option f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',${idx});closeSort(${idx})">Billets expédiés</button>
-          <div class="sort-sep"></div>
-          <button class="sort-option f-libre ${activeFilters.has('libre')?'active':''}" onclick="setFilter('libre',${idx});closeSort(${idx})">Billets libres</button>
+          <div class="sort-dropdown-title">Filtrer</div>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('attente')?'checked':''} onchange="toggleFilter('attente',${idx})"> En attente</label>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('contact')?'checked':''} onchange="toggleFilter('contact',${idx})"> Contact fait</label>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('repondu')?'checked':''} onchange="toggleFilter('repondu',${idx})"> A répondu</label>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('billets')?'checked':''} onchange="toggleFilter('billets',${idx})"> Billets expédiés</label>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('libre')?'checked':''} onchange="toggleFilter('libre',${idx})"> Billets libres</label>
+          ${activeFilters.size>0?`<button class="sort-reset" onclick="clearFilters(${idx})">Tout afficher</button>`:''}
         </div>
       </div>
       <div class="search-inline">
@@ -569,15 +565,6 @@ function renderPanel(idx){
         </div>
       </div>
     </div>
-  </div>
-  <div class="filter-bar">
-    <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Filtrer :</span>
-    <button class="filter-btn ${activeFilters.size===0?'active':''}" onclick="setFilter('',${idx})">Tous</button>
-    <button class="filter-btn f-attente ${activeFilters.has('attente')?'active':''}" onclick="setFilter('attente',${idx})">En attente</button>
-    <button class="filter-btn f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',${idx})">Contact fait</button>
-    <button class="filter-btn f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',${idx})">A répondu</button>
-    <button class="filter-btn f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',${idx})">Billets expédiés</button>
-    <button class="filter-btn f-libre ${activeFilters.has('libre')?'active':''}" onclick="setFilter('libre',${idx})">Billets libres${libres>0?` (${libres})`:''}</button>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
@@ -993,13 +980,20 @@ function matchesFilters(st, isSlotLibre){
   return false;
 }
 
+function toggleFilter(f,idx){
+  if(activeFilters.has(f)) activeFilters.delete(f);
+  else activeFilters.add(f);
+  if(idx===3) renderAllPanel();
+  else renderPanel(idx);
+}
+function clearFilters(idx){
+  activeFilters.clear();
+  if(idx===3) renderAllPanel();
+  else renderPanel(idx);
+}
 function setFilter(f,idx){
-  if(f===''){
-    activeFilters.clear();
-  } else {
-    if(activeFilters.has(f)) activeFilters.delete(f);
-    else activeFilters.add(f);
-  }
+  if(f===''){activeFilters.clear();}
+  else{if(activeFilters.has(f)) activeFilters.delete(f);else activeFilters.add(f);}
   if(idx===3) renderAllPanel();
   else renderPanel(idx);
 }
@@ -1047,19 +1041,17 @@ function renderAllPanel(){
     <div class="stats-bar-right">
       <div id="send-badge-wrap-3"></div>
       <div class="sort-wrap">
-        <button class="btn-sort" id="sort-btn-3" onclick="toggleSort(3)" title="Trier">
+        <button class="btn-sort ${activeFilters.size>0?'open':''}" id="sort-btn-3" onclick="toggleSort(3)" title="Filtrer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
         </button>
         <div class="sort-dropdown" id="sort-drop-3">
-          <div class="sort-dropdown-title">Trier par</div>
-          <button class="sort-option ${activeFilters.size===0?'active':''}" onclick="setFilter('',3);closeSort(3)">Tous</button>
-          <div class="sort-sep"></div>
-          <button class="sort-option f-attente ${activeFilters.has('attente')?'active':''}" onclick="setFilter('attente',3);closeSort(3)">En attente</button>
-          <button class="sort-option f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',3);closeSort(3)">Contact fait</button>
-          <button class="sort-option f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',3);closeSort(3)">A répondu</button>
-          <button class="sort-option f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',3);closeSort(3)">Billets expédiés</button>
-          <div class="sort-sep"></div>
-          <button class="sort-option f-libre ${activeFilters.has('libre')?'active':''}" onclick="setFilter('libre',3);closeSort(3)">Billets libres</button>
+          <div class="sort-dropdown-title">Filtrer</div>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('attente')?'checked':''} onchange="toggleFilter('attente',3)"> En attente</label>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('contact')?'checked':''} onchange="toggleFilter('contact',3)"> Contact fait</label>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('repondu')?'checked':''} onchange="toggleFilter('repondu',3)"> A répondu</label>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('billets')?'checked':''} onchange="toggleFilter('billets',3)"> Billets expédiés</label>
+          <label class="sort-option"><input type="checkbox" ${activeFilters.has('libre')?'checked':''} onchange="toggleFilter('libre',3)"> Billets libres</label>
+          ${activeFilters.size>0?`<button class="sort-reset" onclick="clearFilters(3)">Tout afficher</button>`:''}
         </div>
       </div>
       <div class="search-inline">
@@ -1072,15 +1064,6 @@ function renderAllPanel(){
         </div>
       </div>
     </div>
-  </div>
-  <div class="filter-bar">
-    <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Filtrer :</span>
-    <button class="filter-btn ${activeFilters.size===0?'active':''}" onclick="setFilter('',3)">Tous</button>
-    <button class="filter-btn f-attente ${activeFilters.has('attente')?'active':''}" onclick="setFilter('attente',3)">En attente</button>
-    <button class="filter-btn f-contact ${activeFilters.has('contact')?'active':''}" onclick="setFilter('contact',3)">Contact fait</button>
-    <button class="filter-btn f-repondu ${activeFilters.has('repondu')?'active':''}" onclick="setFilter('repondu',3)">A répondu</button>
-    <button class="filter-btn f-billets ${activeFilters.has('billets')?'active':''}" onclick="setFilter('billets',3)">Billets expédiés</button>
-    <button class="filter-btn f-libre ${activeFilters.has('libre')?'active':''}" onclick="setFilter('libre',3)">Billets libres${libresAll>0?` (${libresAll})`:''}</button>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
