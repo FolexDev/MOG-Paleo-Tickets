@@ -303,8 +303,11 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070}
   </div>
 
   <div class="static-toolbar">
-    <div class="static-toolbar-left" id="send-badge-wrap-static"></div>
+    <div class="static-toolbar-left" id="stats-pills">
+      <!-- rempli par updateStatsPills() -->
+    </div>
     <div class="static-toolbar-right">
+      <div id="send-badge-wrap-static"></div>
       <div class="sort-wrap" id="sort-wrap-static">
         <button class="btn-sort" id="sort-btn-static" onclick="toggleSortStatic()" title="Filtrer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
@@ -565,16 +568,7 @@ function renderPanel(idx){
     return matchesFilters(st,isSlotLibre);
   });
 
-  let html=`<div class="stats-bar">
-    <div class="stats-bar-left">
-      <div class="stat-pill"><strong>${total}</strong> gagnants</div>
-      <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${total-contact-repondu-billets}</strong> en attente</div>
-      <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
-      <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
-      <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
-    </div>
-  </div>
-  <div class="table-wrap"><div class="table-scroll"><table>
+  let html=`<div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
     <th>Ant.</th><th>Date</th><th>#</th><th>Jeu</th><th>Gagnant</th><th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
@@ -861,8 +855,38 @@ function copyMail(btn,ak,dateRaw,nomRaw){
 }
 
 /* UI */
+/* STATS PILLS */
+function updateStatsPills(){
+  // Agréger toutes les données des 3 sheets
+  let total=0,contact=0,repondu=0,billets=0;
+  for(let i=0;i<3;i++){
+    const rows=(sheetData[i]||[]).slice(1);
+    rows.forEach(r=>{
+      const ant=(r[0]||'').trim();
+      if(!ant) return;
+      const nom=(r[5]||'').trim();
+      if(!nom) return;
+      total++;
+      const st=(r[4]||'').toLowerCase();
+      if(st.includes('contact')) contact++;
+      else if(st.includes('répondu')||st.includes('repondu')) repondu++;
+      else if(st.includes('expédié')||st.includes('expedie')||st.includes('billet')) billets++;
+    });
+  }
+  const attente=total-contact-repondu-billets;
+  const el=document.getElementById('stats-pills');
+  if(!el) return;
+  el.innerHTML=`
+    <div class="stat-pill"><strong>${total}</strong> gagnants</div>
+    <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${attente}</strong> en attente</div>
+    <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
+    <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
+    <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>`;
+}
+
 /* SEND BADGE */
 function updateSendBadgePanel(panelIdx){
+  updateStatsPills();
   let count=0;
   for(let i=0;i<3;i++){
     const rows=(sheetData[i]||[]).slice(1);
@@ -1084,16 +1108,7 @@ function renderAllPanel(){
   const billets=gagnants.filter(g=>{const st=(g.main[4]||'').toLowerCase();return st.includes('expédié')||st.includes('expedie')||st.includes('billet');}).length;
   const attenteN=total-contact-repondu-billets;
 
-  let html=`<div class="stats-bar">
-    <div class="stats-bar-left">
-      <div class="stat-pill"><strong>${total}</strong> gagnants</div>
-      <div class="stat-pill" style="background:#fff4e0;color:#b35f00;border-color:#f0c070"><strong>${attenteN}</strong> en attente</div>
-      <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
-      <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
-      <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
-    </div>
-  </div>
-  <div class="table-wrap"><div class="table-scroll"><table>
+  let html=`<div class="table-wrap"><div class="table-scroll"><table>
   <thead><tr>
     <th>Ant.</th><th>Date</th><th>#</th><th>Jeu</th><th>Gagnant</th><th>Statut</th><th>Paléo Tickets</th><th>Mail</th>
   </tr></thead><tbody>`;
