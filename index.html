@@ -63,6 +63,11 @@ header{background:var(--grad);padding:0 1.25rem;display:flex;align-items:center;
 .tab-btn.active .tab-dot{background:#fff !important;opacity:.8}
 .tab-dot{width:7px;height:7px;border-radius:50%;transition:background .15s}
 
+/* STATIC TOOLBAR */
+.static-toolbar{background:var(--surface);border-bottom:0.5px solid var(--border);padding:8px 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.static-toolbar-left{display:flex;align-items:center;gap:6px;flex:1}
+.static-toolbar-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+
 /* MAIN */
 main{padding:1.25rem}
 .tab-panel{display:none}
@@ -295,6 +300,35 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070}
     <button class="tab-btn" onclick="switchTab(3)">
       <span class="tab-dot" style="background:#888"></span>Tous
     </button>
+  </div>
+
+  <div class="static-toolbar">
+    <div class="static-toolbar-left" id="send-badge-wrap-static"></div>
+    <div class="static-toolbar-right">
+      <div class="sort-wrap" id="sort-wrap-static">
+        <button class="btn-sort" id="sort-btn-static" onclick="toggleSortStatic()" title="Filtrer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
+        </button>
+        <div class="sort-dropdown" id="sort-drop-static">
+          <div class="sort-dropdown-title">Filtrer</div>
+          <label class="sort-option"><input type="checkbox" id="ck-attente" onchange="toggleFilterStatic('attente')"> En attente</label>
+          <label class="sort-option"><input type="checkbox" id="ck-contact" onchange="toggleFilterStatic('contact')"> Contact fait</label>
+          <label class="sort-option"><input type="checkbox" id="ck-repondu" onchange="toggleFilterStatic('repondu')"> A répondu</label>
+          <label class="sort-option"><input type="checkbox" id="ck-billets" onchange="toggleFilterStatic('billets')"> Billets expédiés</label>
+          <label class="sort-option"><input type="checkbox" id="ck-libre" onchange="toggleFilterStatic('libre')"> Billets libres</label>
+          <div id="ck-reset-wrap"></div>
+        </div>
+      </div>
+      <div class="search-inline">
+        <input class="search-input" id="search-input" type="text" placeholder="Rechercher…" onkeydown="onSearchKey(event)" />
+        <div class="search-nav" id="search-nav">
+          <span id="search-count" class="search-count"></span>
+          <button class="btn-nav" onclick="navSearch(-1)" title="Précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="btn-nav" onclick="navSearch(1)" title="Suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+          <button class="btn-nav" onclick="clearSearch()" title="Effacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="send-badge-wrap" style="display:none"></div>
@@ -538,32 +572,6 @@ function renderPanel(idx){
       <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
       <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
       <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
-    </div>
-    <div class="stats-bar-right">
-      <div id="send-badge-wrap-${idx}"></div>
-      <div class="sort-wrap">
-        <button class="btn-sort ${activeFilters.size>0?'open':''}" id="sort-btn-${idx}" onclick="toggleSort(${idx})" title="Filtrer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
-        </button>
-        <div class="sort-dropdown" id="sort-drop-${idx}">
-          <div class="sort-dropdown-title">Filtrer</div>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('attente')?'checked':''} onchange="toggleFilter('attente',${idx})"> En attente</label>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('contact')?'checked':''} onchange="toggleFilter('contact',${idx})"> Contact fait</label>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('repondu')?'checked':''} onchange="toggleFilter('repondu',${idx})"> A répondu</label>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('billets')?'checked':''} onchange="toggleFilter('billets',${idx})"> Billets expédiés</label>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('libre')?'checked':''} onchange="toggleFilter('libre',${idx})"> Billets libres</label>
-          ${activeFilters.size>0?`<button class="sort-reset" onclick="clearFilters(${idx})">Tout afficher</button>`:''}
-        </div>
-      </div>
-      <div class="search-inline">
-        <input class="search-input" id="search-input" type="text" placeholder="Rechercher…" oninput="onSearch()" />
-        <div class="search-nav" id="search-nav">
-          <span id="search-count" class="search-count"></span>
-          <button class="btn-nav" onclick="navSearch(-1)" title="Précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-          <button class="btn-nav" onclick="navSearch(1)" title="Suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-          <button class="btn-nav" onclick="clearSearch()" title="Effacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
-      </div>
     </div>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
@@ -864,7 +872,7 @@ function updateSendBadgePanel(panelIdx){
       if(st.includes('répondu')||st.includes('repondu')) count++;
     });
   }
-  const wrap=document.getElementById('send-badge-wrap-'+panelIdx);
+  const wrap=document.getElementById('send-badge-wrap-static');
   if(!wrap) return;
   if(count>0){
     const isActive=activeFilters.has('repondu');
@@ -884,6 +892,14 @@ function toggleSendBadgeFilter(){
     activeFilters.add('repondu');
     switchTab(3);
   }
+  ['attente','contact','repondu','billets','libre'].forEach(k=>{
+    const el=document.getElementById('ck-'+k);
+    if(el) el.checked=activeFilters.has(k);
+  });
+  const rw=document.getElementById('ck-reset-wrap');
+  if(rw) rw.innerHTML=activeFilters.size>0?'<button class="sort-reset" onclick="clearFiltersStatic()">Tout afficher</button>':'';
+  const btn=document.getElementById('sort-btn-static');
+  if(btn) btn.classList.toggle('open',activeFilters.size>0);
   renderAllPanel();
 }
 
@@ -906,8 +922,15 @@ function closeSort(idx){
 }
 document.addEventListener('click',function(e){
   if(!e.target.closest('.sort-wrap')){
-    document.querySelectorAll('.sort-dropdown.open').forEach(d=>d.classList.remove('open'));
-    document.querySelectorAll('.btn-sort.open').forEach(b=>b.classList.remove('open'));
+    document.querySelectorAll('.sort-dropdown.open').forEach(d=>{
+      // Ne pas fermer le dropdown statique s'il a des filtres actifs
+      if(d.id==='sort-drop-static'&&activeFilters.size>0) return;
+      d.classList.remove('open');
+    });
+    document.querySelectorAll('.btn-sort').forEach(b=>{
+      if(b.id==='sort-btn-static'&&activeFilters.size>0) return;
+      b.classList.remove('open');
+    });
   }
 });
 
@@ -915,13 +938,13 @@ document.addEventListener('click',function(e){
 let searchResults=[];
 let searchIdx=0;
 
-function onSearch(){
+function onSearchKey(e){
+  if(e.key!=='Enter') return;
   const q=document.getElementById('search-input').value.trim().toLowerCase();
   document.querySelectorAll('tr.search-highlight').forEach(r=>r.classList.remove('search-highlight'));
   searchResults=[];searchIdx=0;
   const nav=document.getElementById('search-nav');
   if(!q){nav.classList.remove('visible');return;}
-  // scan all panels
   for(let panelIdx=0;panelIdx<3;panelIdx++){
     const rows=(sheetData[panelIdx]||[]).slice(1);
     rows.forEach((r,ri)=>{
@@ -931,7 +954,7 @@ function onSearch(){
       const paleoPre=(r[9]||'').toLowerCase();
       const paleoMail=(r[10]||'').toLowerCase();
       if(nom.includes(q)||email.includes(q)||paleoNom.includes(q)||paleoPre.includes(q)||paleoMail.includes(q)){
-        searchResults.push({panelIdx, rowIdx: ri+2}); // +2 : header row + 1-based
+        searchResults.push({panelIdx, rowIdx: ri+2});
       }
     });
   }
@@ -980,25 +1003,47 @@ function matchesFilters(st, isSlotLibre){
   return false;
 }
 
-function toggleFilter(f,idx){
+function toggleFilterStatic(f){
   if(activeFilters.has(f)) activeFilters.delete(f);
   else activeFilters.add(f);
-  if(idx===3) renderAllPanel();
-  else renderPanel(idx);
-  // Rouvrir le dropdown après le re-render
-  const drop=document.getElementById('sort-drop-'+idx);
-  const btn=document.getElementById('sort-btn-'+idx);
-  if(drop) drop.classList.add('open');
-  if(btn) btn.classList.add('open');
+  // Sync checkboxes
+  ['attente','contact','repondu','billets','libre'].forEach(k=>{
+    const el=document.getElementById('ck-'+k);
+    if(el) el.checked=activeFilters.has(k);
+  });
+  // Bouton reset
+  const rw=document.getElementById('ck-reset-wrap');
+  if(rw) rw.innerHTML=activeFilters.size>0?'<button class="sort-reset" onclick="clearFiltersStatic()">Tout afficher</button>':'';
+  // Icône active
+  const btn=document.getElementById('sort-btn-static');
+  if(btn) btn.classList.toggle('open',activeFilters.size>0);
+  // Re-render onglet actif
+  const activeTab=document.querySelector('.tab-btn.active');
+  const tabIdx=activeTab?[...document.querySelectorAll('.tab-btn')].indexOf(activeTab):0;
+  if(tabIdx===3) renderAllPanel(); else renderPanel(tabIdx);
 }
-function clearFilters(idx){
+function clearFiltersStatic(){
   activeFilters.clear();
-  if(idx===3) renderAllPanel();
-  else renderPanel(idx);
-  const drop=document.getElementById('sort-drop-'+idx);
-  const btn=document.getElementById('sort-btn-'+idx);
-  if(drop) drop.classList.add('open');
-  if(btn) btn.classList.add('open');
+  ['attente','contact','repondu','billets','libre'].forEach(k=>{
+    const el=document.getElementById('ck-'+k);
+    if(el) el.checked=false;
+  });
+  const rw=document.getElementById('ck-reset-wrap');
+  if(rw) rw.innerHTML='';
+  const btn=document.getElementById('sort-btn-static');
+  if(btn) btn.classList.remove('open');
+  const activeTab=document.querySelector('.tab-btn.active');
+  const tabIdx=activeTab?[...document.querySelectorAll('.tab-btn')].indexOf(activeTab):0;
+  if(tabIdx===3) renderAllPanel(); else renderPanel(tabIdx);
+}
+function toggleSortStatic(){
+  const btn=document.getElementById('sort-btn-static');
+  const drop=document.getElementById('sort-drop-static');
+  if(!btn||!drop) return;
+  const isOpen=drop.classList.contains('open')&&!activeFilters.size;
+  document.querySelectorAll('.sort-dropdown.open').forEach(d=>{if(d.id!=='sort-drop-static')d.classList.remove('open');});
+  if(isOpen&&!activeFilters.size){drop.classList.remove('open');btn.classList.toggle('open',activeFilters.size>0);}
+  else{drop.classList.toggle('open');}
 }
 function setFilter(f,idx){
   if(f===''){activeFilters.clear();}
@@ -1046,32 +1091,6 @@ function renderAllPanel(){
       <div class="stat-pill" style="background:#f3eeff;color:#5b33b0;border-color:#c4a8f5"><strong>${contact}</strong> contact fait</div>
       <div class="stat-pill" style="background:#fff0f0;color:#b02020;border-color:#f5a8a8"><strong>${repondu}</strong> a répondu</div>
       <div class="stat-pill" style="background:#eef7f2;color:#1a6b3f;border-color:#9fd4b8"><strong>${billets}</strong> billets expédiés</div>
-    </div>
-    <div class="stats-bar-right">
-      <div id="send-badge-wrap-3"></div>
-      <div class="sort-wrap">
-        <button class="btn-sort ${activeFilters.size>0?'open':''}" id="sort-btn-3" onclick="toggleSort(3)" title="Filtrer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
-        </button>
-        <div class="sort-dropdown" id="sort-drop-3">
-          <div class="sort-dropdown-title">Filtrer</div>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('attente')?'checked':''} onchange="toggleFilter('attente',3)"> En attente</label>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('contact')?'checked':''} onchange="toggleFilter('contact',3)"> Contact fait</label>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('repondu')?'checked':''} onchange="toggleFilter('repondu',3)"> A répondu</label>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('billets')?'checked':''} onchange="toggleFilter('billets',3)"> Billets expédiés</label>
-          <label class="sort-option"><input type="checkbox" ${activeFilters.has('libre')?'checked':''} onchange="toggleFilter('libre',3)"> Billets libres</label>
-          ${activeFilters.size>0?`<button class="sort-reset" onclick="clearFilters(3)">Tout afficher</button>`:''}
-        </div>
-      </div>
-      <div class="search-inline">
-        <input class="search-input" id="search-input" type="text" placeholder="Rechercher…" oninput="onSearch()" />
-        <div class="search-nav" id="search-nav">
-          <span id="search-count" class="search-count"></span>
-          <button class="btn-nav" onclick="navSearch(-1)" title="Précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-          <button class="btn-nav" onclick="navSearch(1)" title="Suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-          <button class="btn-nav" onclick="clearSearch()" title="Effacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
-      </div>
     </div>
   </div>
   <div class="table-wrap"><div class="table-scroll"><table>
