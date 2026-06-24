@@ -985,11 +985,20 @@ function toggleFilter(f,idx){
   else activeFilters.add(f);
   if(idx===3) renderAllPanel();
   else renderPanel(idx);
+  // Rouvrir le dropdown après le re-render
+  const drop=document.getElementById('sort-drop-'+idx);
+  const btn=document.getElementById('sort-btn-'+idx);
+  if(drop) drop.classList.add('open');
+  if(btn) btn.classList.add('open');
 }
 function clearFilters(idx){
   activeFilters.clear();
   if(idx===3) renderAllPanel();
   else renderPanel(idx);
+  const drop=document.getElementById('sort-drop-'+idx);
+  const btn=document.getElementById('sort-btn-'+idx);
+  if(drop) drop.classList.add('open');
+  if(btn) btn.classList.add('open');
 }
 function setFilter(f,idx){
   if(f===''){activeFilters.clear();}
