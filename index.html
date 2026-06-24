@@ -130,9 +130,9 @@ tr:last-child td{border-bottom:none}
 tr:hover td{background:#faf9f7}
 
 /* DAY SEPARATOR */
-tr.day-sep td{background:var(--bg);padding:6px 10px;border-bottom:1px solid var(--border);border-top:1px solid var(--border)}
-.day-sep-label{font-size:11px;font-weight:700;color:#7a5aaa;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:8px}
-.day-sep-label::after{content:'';flex:1;height:2px;background:linear-gradient(90deg,#9369b4 0%,#65e3b5 100%);border-radius:2px}
+tr.day-sep td{background:linear-gradient(90deg,#9369b4 0%,#65e3b5 100%);padding:6px 10px;border-bottom:none;border-top:none}
+.day-sep-label{font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:8px}
+.day-sep-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.35)}
 
 /* ANTENNE BADGES */
 .ant-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
