@@ -610,8 +610,14 @@ function renderPanel(idx){
         <td rowspan="${sp}" style="vertical-align:middle"><span class="ant-libre">${antLabel(ant)}</span></td>
         <td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-faint)">${fmtDate(date)}</td>
         <td style="text-align:center;color:var(--text-faint);font-size:11px;font-weight:600">${esc(bNo)}</td>
-        <td colspan="5" rowspan="${sp}" style="vertical-align:middle">
-          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','')">
+        <td rowspan="${sp}" style="vertical-align:middle;max-width:110px">
+          <div class="inline-field">
+            <div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div>
+            <button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'','','','${jsEsc(jeu)}')" title="Renseigner le jeu">${editIcon}</button>
+          </div>
+        </td>
+        <td colspan="4" rowspan="${sp}" style="vertical-align:middle">
+          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','${jsEsc(jeu)}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Attribuer un gagnant
           </button>
@@ -704,20 +710,20 @@ async function updateStatus(select,sheetIdx,rowNum){
 function openWinnerModal(idx,row,nom,tel,email,jeu){
   currentEditWinner={idx,row};
   const isLibre=!nom&&!tel&&!email;
+  const hasJeu=!!jeu;
   document.getElementById('mw-title').textContent=isLibre?`Attribuer le billet #${row}`:'Modifier le gagnant';
   document.getElementById('mw-sub').textContent=`${SHEETS[idx].name}`;
   document.getElementById('mw-save-btn').textContent=isLibre?'Attribuer':'Enregistrer';
-  // hint line
   let hint=document.getElementById('mw-hint');
   if(!hint){hint=document.createElement('p');hint.id='mw-hint';hint.className='modal-hint';document.getElementById('mw-save-btn').parentElement.after(hint);}
-  hint.innerHTML=isLibre?`Le billet passe alors de <strong>libre</strong> à <strong>en attente</strong>.`:'';
+  hint.innerHTML=isLibre?`Le billet passe alors de <strong>libre</strong> à <strong>en attente</strong>.<br><small style="color:var(--text-faint)">Vous pouvez aussi enregistrer uniquement le nom du jeu sans gagnant.</small>`:'';
   hint.style.display=isLibre?'block':'none';
   document.getElementById('mw-nom').value=nom;
   document.getElementById('mw-tel').value=tel;
   document.getElementById('mw-email').value=email;
   document.getElementById('mw-jeu').value=jeu;
   document.getElementById('modal-winner').classList.add('open');
-  document.getElementById('mw-nom').focus();
+  document.getElementById(isLibre&&!hasJeu?'mw-jeu':'mw-nom').focus();
 }
 async function saveWinner(){
   if(!currentEditWinner)return;
@@ -729,13 +735,11 @@ async function saveWinner(){
   const btn=document.getElementById('mw-save-btn');
   btn.disabled=true;btn.textContent='Enregistrement...';
   try{
-    // Col D=jeu(idx3), F=nom(idx5), G=tel(idx6), H=email(idx7)
-    // On écrit D:H d'un coup en incluant col E (statut) qu'on ne touche pas → on relit d'abord
     const cur=sheetData[idx][row-1]||[];
     const statut=cur[4]||'';
     await sheetWrite(SHEETS[idx].id,`D${row}:H${row}`,[[jeu,statut,nom,tel,email]]);
     closeModal('modal-winner');
-    showToast('Gagnant mis à jour');
+    showToast(nom?'Gagnant mis à jour':'Jeu enregistré');
     await loadSheet(idx);
   }catch(e){showToast('Erreur : '+e.message);}
   finally{btn.disabled=false;btn.textContent='Enregistrer';}
@@ -1150,8 +1154,14 @@ function renderAllPanel(){
         <td rowspan="${sp}" style="vertical-align:middle"><span class="ant-libre">${antLabel(ant)}</span></td>
         <td rowspan="${sp}" style="vertical-align:middle;font-size:11px;color:var(--text-faint)">${fmtDate(date)}</td>
         <td style="text-align:center;color:var(--text-faint);font-size:11px;font-weight:600">${esc(bNo)}</td>
-        <td colspan="5" rowspan="${sp}" style="vertical-align:middle">
-          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','')">
+        <td rowspan="${sp}" style="vertical-align:middle;max-width:110px">
+          <div class="inline-field">
+            <div class="editable-val ${jeu?'':'empty'}" style="font-size:11px">${esc(jeu)||'—'}</div>
+            <button class="btn-edit-inline" onclick="openWinnerModal(${idx},${mIdx},'','','','${jsEsc(jeu)}')" title="Renseigner le jeu">${editIcon}</button>
+          </div>
+        </td>
+        <td colspan="4" rowspan="${sp}" style="vertical-align:middle">
+          <button class="btn-attribuer" onclick="openWinnerModal(${idx},${mIdx},'','','','${jsEsc(jeu)}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Attribuer un gagnant
           </button>
