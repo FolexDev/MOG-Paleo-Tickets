@@ -61,8 +61,6 @@ header{background:var(--grad);padding:0 1.25rem;display:flex;align-items:center;
 .tab-btn:hover{color:var(--text);background:var(--bg)}
 .tab-btn.active{color:#fff;background:var(--grad);border-color:transparent;box-shadow:0 2px 8px rgba(232,48,122,.25)}
 .tab-btn.active .tab-dot{background:#fff !important;opacity:.8}
-.tab-link{padding:5px 14px;font-size:12px;font-weight:600;color:var(--text-muted);border:1.5px solid var(--border);background:var(--bg);cursor:pointer;border-radius:20px;display:flex;align-items:center;gap:6px;font-family:inherit;text-decoration:none;transition:all .15s;margin-right:10px}
-.tab-link:hover{color:var(--text);border-color:var(--border-strong)}
 .tab-dot{width:7px;height:7px;border-radius:50%;transition:background .15s}
 
 /* STATIC TOOLBAR */
@@ -269,6 +267,7 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070}
     </div>
     <div class="header-right">
       <div class="header-sheet-links">
+        <a href="https://b2b.paleo.ch/account/login" target="_blank" class="header-sheet-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Billeterie</a>
         <a href="https://docs.google.com/spreadsheets/d/15GQ6osEPy44nmQw6HVD-L2UNEGQ5gCo8fow4YnxyY7c/edit" target="_blank" class="header-sheet-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>ONE-LAC</a>
         <a href="https://docs.google.com/spreadsheets/d/116K_qpndEqkmOwIuvTBoiqtJG_v8UaFBsfNmg8RTxZ8/edit" target="_blank" class="header-sheet-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>MOC</a>
         <a href="https://docs.google.com/spreadsheets/d/1J8833aM0abL9iTD0-GGMGlnkPc5vkqHRDXpvkWR8jrk/edit" target="_blank" class="header-sheet-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>LFM-ROUGE</a>
@@ -290,10 +289,6 @@ tr.search-highlight td{background:#fffbe6 !important;outline:2px solid #f0c070}
   </header>
 
   <div class="tabs-bar">
-    <a class="tab-link" href="https://b2b.paleo.ch/account/login" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      Billeterie
-    </a>
     <button class="tab-btn active" onclick="switchTab(0)">
       <span class="tab-dot" style="background:#e8352a"></span>One FM &amp; Radio Lac
     </button>
