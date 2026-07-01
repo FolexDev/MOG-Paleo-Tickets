@@ -676,14 +676,18 @@ function buildPaleoCell(idx,rowNum,bNo,pNom,pPre,pMail,ant,extraRow,pNom2,pPre2,
   sp=sp||1;
   const filled1=pNom||pPre||pMail;
   const filled2=pNom2||pPre2||pMail2;
-  const txt1=filled1?`${pNom} ${pPre} — ${pMail}`:'non renseigné';
-  const txt2=filled2?`${pNom2} ${pPre2} — ${pMail2}`:'';
+  const copyIcon=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+  const mailCopy1=pMail?`<button class="btn-edit-inline" style="opacity:1;flex-shrink:0" onclick="copyEmail(this,'${jsEsc(pMail)}')" title="Copier l'email">${copyIcon}</button>`:'';
+  const mailCopy2=pMail2?`<button class="btn-edit-inline" style="opacity:1;flex-shrink:0" onclick="copyEmail(this,'${jsEsc(pMail2)}')" title="Copier l'email">${copyIcon}</button>`:'';
+  const line1=filled1?`<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap"><span>${esc(pNom)} ${esc(pPre)} — ${esc(pMail)}</span>${mailCopy1}</div>`:'<span class="empty">non renseigné</span>';
+  const line2=filled2?`<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap"><span>${esc(pNom2)} ${esc(pPre2)} — ${esc(pMail2)}</span>${mailCopy2}</div>`:'<span class="empty">non renseigné</span>';
   const extraArg=extraRow?`,${extraRow},'${jsEsc(pNom2||'')}','${jsEsc(pPre2||'')}','${jsEsc(pMail2||'')}'`:",null,'','',''";
   const editBtn=ant?`<button class="btn-edit-paleo" onclick="openPaleoModal(${idx},${rowNum},'${jsEsc(bNo)}','${jsEsc(pNom)}','${jsEsc(pPre)}','${jsEsc(pMail)}'${extraArg})" title="Modifier données Paléo">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
   </button>`:'';
-  // When sp=2, show both accounts stacked in one rowspan=2 cell
-  const bothContent=sp===2?`<div class="paleo-text ${filled1?'':'empty'}" style="border-bottom:0.5px solid var(--border);padding-bottom:4px;margin-bottom:4px">${esc(txt1)}</div><div class="paleo-text ${filled2?'':'empty'}">${esc(txt2||'non renseigné')}</div>`:`<div class="paleo-text ${filled1?'':'empty'}">${esc(txt1)}</div>`;
+  const bothContent=sp===2
+    ?`<div class="paleo-text ${filled1?'':'empty'}" style="border-bottom:0.5px solid var(--border);padding-bottom:4px;margin-bottom:4px">${line1}</div><div class="paleo-text ${filled2?'':'empty'}">${line2}</div>`
+    :`<div class="paleo-text ${filled1?'':'empty'}">${line1}</div>`;
   return `<td rowspan="${sp}" style="max-width:220px;vertical-align:middle">
     <div class="paleo-inline">
       <div style="flex:1;min-width:0">${bothContent}</div>
